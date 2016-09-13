@@ -13,7 +13,8 @@ namespace _3dApplication
         [STAThread]
         static void Main()
         {
-            IDevice screen = new DXDevice();
+            Camera camera = new Camera();
+            IDevice screen = new DXDevice(camera);
             screen.Show();
             screen.Focus();
 
@@ -38,7 +39,7 @@ namespace _3dApplication
                             }
                             _lastTick = currTick;
                         }
-                        screen.Render(meshes);
+                        screen.Render(camera, meshes);
                     }
                     else
                         Thread.Sleep(100);

@@ -13,16 +13,15 @@ namespace _3dApplication
         #region Private
 
         #region Attributes
-
-        private float _aspectRatio;
         private Device _device { get; set; }
+        private Camera _camera { get; set; }
         #endregion
 
         #region Methods
         private void DXDevice_Resize(object sender, EventArgs e)
         {
             var size = (sender as Form).ClientSize;
-            _aspectRatio = (float)size.Width / (float)size.Height;
+            _camera.SetSize(size.Width, size.Height);
         }
         private void DXDevice_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -46,7 +45,7 @@ namespace _3dApplication
         #endregion
 
         #region Methods
-        public DXDevice()
+        public DXDevice(Camera camera)
         {
             IsAlive = true;
             Size = new Size(800, 600);
@@ -61,17 +60,18 @@ namespace _3dApplication
             parameters.PresentationInterval = PresentInterval.Immediate;
             parameters.BackBufferCount = 1;
 
-            _aspectRatio = (float)this.ClientSize.Width / (float)this.ClientSize.Height;
+            _camera = camera;
             _device = new Device(new Direct3D(), 0, DeviceType.Hardware, this.Handle, CreateFlags.HardwareVertexProcessing, parameters);
+            _camera.SetSize(Size.Width, Size.Height);
         }
-        public void Render(IEnumerable<IMesh> meshes)
+        public void Render(Camera camera, IEnumerable<IMesh> meshes)
         {
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
             _device.BeginScene();
 
             _device.SetRenderState(RenderState.Lighting, false);
-            _device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovRH((float)Math.PI / 4, _aspectRatio, 8f, 0f));
-            _device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
+            _device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovRH(camera.Fov, camera.AspectRatio, camera.Znear, camera.Zfar));
+            _device.SetTransform(TransformState.View, Matrix.LookAtRH(camera.Eye, camera.Target, camera.Up));
 
             foreach (IMesh mesh in meshes)
             {

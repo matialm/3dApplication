@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\Camera.cs" />
     <Compile Include="Implementation\DXDevice.cs">
       <SubType>Form</SubType>
     </Compile>

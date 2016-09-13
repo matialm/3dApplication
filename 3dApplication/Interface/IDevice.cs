@@ -1,5 +1,6 @@
 ﻿using SharpDX.Direct3D9;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace _3dApplication
 {
@@ -8,10 +9,11 @@ namespace _3dApplication
         bool Focused { get; }
         bool IsAlive { get; set; }
         bool Accesible { get; }
+        Size Size { get; set; }
 
         void Show();
         bool Focus();
-        void Render(IEnumerable<IMesh> meshes);
+        void Render(Camera camera, IEnumerable<IMesh> meshes);
         VertexBuffer CreateVertexBuffer(int sizeInBytes, VertexTexture[] vertices);
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
