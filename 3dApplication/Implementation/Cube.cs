@@ -1,7 +1,10 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace _3dApplication
 {
@@ -13,34 +16,63 @@ namespace _3dApplication
         private Vector3 _angle;
         private Vector3 _position;
         private Vector3 _center;
+        private float _scale;
         #endregion
 
         #region Methods
         private void LoadProperties()
         {
+            _scale = 2;
             _angle = new Vector3(0, 0, 0);
             PrimitiveType = PrimitiveType.TriangleList;
             BaseVertexIndex = 0;
             MinVertexIndex = 0;
             StartIndex = 0;
-            Stride = (Vector4.SizeInBytes + 4);
+            Stride = Marshal.SizeOf<Vertex>();
             Transformation = Matrix.Identity;
         }
         private void LoadVertices(IDevice device)
         {
-            IList<Vertex> vertices = new List<Vertex>();
+            Vertex[] vertices = new Vertex[24];
 
-            vertices.Add(new Vertex { Color = Color.Blue, Position = new Vector4(0.0f + _position.X, 0.0f + _position.Y, 2.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Red, Position = new Vector4(0.0f + _position.X, 2.0f + _position.Y, 2.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Magenta, Position = new Vector4(2.0f + _position.X, 2.0f + _position.Y, 2.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Yellow, Position = new Vector4(2.0f + _position.X, 0.0f + _position.Y, 2.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Green, Position = new Vector4(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Gray, Position = new Vector4(0.0f + _position.X, 2.0f + _position.Y, 0.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Green, Position = new Vector4(2.0f + _position.X, 2.0f + _position.Y, 0.0f + _position.Z, 1.0f) });
-            vertices.Add(new Vertex { Color = Color.Pink, Position = new Vector4(2.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z, 1.0f) });
+            //frente
+            vertices[0] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[1] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[2] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[3] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
 
-            NumVertices = vertices.Count;
-            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices.ToArray());
+            //contra frente
+            vertices[4] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[5] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[6] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[7] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+
+            //lateral izquierdo
+            vertices[8] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[9] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[10] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[11] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
+
+            //lateral derecho
+            vertices[12] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[13] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[14] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[15] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+
+            //techo
+            vertices[16] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[17] = new Vertex { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[18] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[19] = new Vertex { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
+
+            //piso
+            vertices[20] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[21] = new Vertex { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[22] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[23] = new Vertex { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+
+            NumVertices = vertices.Count();
+            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
             CalculateCenter(vertices);
         }
         private void LoadIndexs(IDevice device)
@@ -50,66 +82,73 @@ namespace _3dApplication
             //frente
             indexs.Add(0);
             indexs.Add(1);
-            indexs.Add(3);
-            indexs.Add(3);
-            indexs.Add(1);
             indexs.Add(2);
+            indexs.Add(0);
+            indexs.Add(2);
+            indexs.Add(3);
 
             //contra frente
             indexs.Add(5);
             indexs.Add(4);
-            indexs.Add(6);
-            indexs.Add(6);
-            indexs.Add(4);
             indexs.Add(7);
+            indexs.Add(5);
+            indexs.Add(7);
+            indexs.Add(6);
 
             //lateral izquierdo
-            indexs.Add(4);
-            indexs.Add(5);
-            indexs.Add(0);
-            indexs.Add(0);
-            indexs.Add(5);
-            indexs.Add(1);
+            indexs.Add(8);
+            indexs.Add(9);
+            indexs.Add(10);
+            indexs.Add(8);
+            indexs.Add(10);
+            indexs.Add(11);
 
             //lateral derecho
-            indexs.Add(3);
-            indexs.Add(2);
-            indexs.Add(7);
-            indexs.Add(7);
-            indexs.Add(2);
-            indexs.Add(6);
+            indexs.Add(12);
+            indexs.Add(13);
+            indexs.Add(14);
+            indexs.Add(12);
+            indexs.Add(14);
+            indexs.Add(15);
 
             //techo
-            indexs.Add(1);
-            indexs.Add(5);
-            indexs.Add(2);
-            indexs.Add(2);
-            indexs.Add(5);
-            indexs.Add(6);
+            indexs.Add(16);
+            indexs.Add(17);
+            indexs.Add(18);
+            indexs.Add(16);
+            indexs.Add(18);
+            indexs.Add(19);
 
             //piso
-            indexs.Add(4);
-            indexs.Add(0);
-            indexs.Add(7);
-            indexs.Add(7);
-            indexs.Add(0);
-            indexs.Add(3);
+            indexs.Add(20);
+            indexs.Add(21);
+            indexs.Add(22);
+            indexs.Add(20);
+            indexs.Add(22);
+            indexs.Add(23);
+
 
             IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
-            PrimitiveCount = (indexs.Count / 6) * 2;
+            PrimitiveCount = 12;
         }
         private void LoadVertexDeclaration(IDevice device)
         {
             IList<VertexElement> vertexElements = new List<VertexElement>();
             vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float4, DeclarationMethod.Default, DeclarationUsage.Position, 0));
-            vertexElements.Add(new VertexElement(0, 16, DeclarationType.Color, DeclarationMethod.Default, DeclarationUsage.Color, 0));
+            //vertexElements.Add(new VertexElement(0, 16, DeclarationType.Color, DeclarationMethod.Default, DeclarationUsage.Color, 0));
+            vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
             VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
         }
-        private void CalculateCenter(IEnumerable<Vertex> vertices)
+        private void LoadTexture(IDevice device)
         {
-            Vector4 vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
+            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\crate.jpg");
+            BaseTexture = device.CreateBaseTexture(data);
+        }
+        private void CalculateCenter(Vertex[] vertices)
+        {
+            Vector3 vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
             _center = new Vector3((vertex.X - _position.X) / 2 + _position.X, (vertex.Y - _position.Y) / 2 + _position.Y, (vertex.Z - _position.Z) / 2 + _position.Z);
         }
         #endregion
@@ -123,6 +162,7 @@ namespace _3dApplication
         public PrimitiveType PrimitiveType { get; set; }
         public VertexBuffer VertexBuffer { get; set; }
         public IndexBuffer IndexBuffer { get; set; }
+        public BaseTexture BaseTexture { get; set; }
         public Matrix Transformation { get; set; }
         public int BaseVertexIndex { get; set; }
         public int MinVertexIndex { get; set; }
@@ -144,15 +184,16 @@ namespace _3dApplication
             LoadVertices(device);
             LoadIndexs(device);
             LoadVertexDeclaration(device);
+            LoadTexture(device);
         }
         public void Rotate()
         {
             _angle.X += 0.05f;
             _angle.Y += 0.05f;
-            _angle.Z += 0.05f;
+            //_angle.Z += 0.05f;
 
             var rotation = Matrix.RotationX(_angle.X) * Matrix.RotationY(_angle.Y) * Matrix.RotationZ(_angle.Z);
-            Transformation = Matrix.Translation(-1 * _center) * rotation * Matrix.Translation(_center);
+            Transformation = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * rotation * Matrix.Translation(_center);
         }
         #endregion
 

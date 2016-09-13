@@ -9,6 +9,7 @@ namespace _3dApplication
         PrimitiveType PrimitiveType { get; set; }
         VertexBuffer VertexBuffer { get; set; }
         IndexBuffer IndexBuffer { get; set; }
+        BaseTexture BaseTexture { get; set; }
         Matrix Transformation { get; set; }
         int BaseVertexIndex { get; set; }
         int MinVertexIndex { get; set; }

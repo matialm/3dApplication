@@ -15,6 +15,7 @@ namespace _3dApplication
         VertexBuffer CreateVertexBuffer(int sizeInBytes, Vertex[] vertices);
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
+        BaseTexture CreateBaseTexture(byte[] data);
         void Dispose();
     }
 }

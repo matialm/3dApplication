@@ -71,10 +71,12 @@ namespace _3dApplication
 
             _device.SetRenderState(RenderState.Lighting, false);
             _device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovRH((float)Math.PI / 4, _aspectRatio, 8f, 0f));
-            _device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
+            //_device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
+            _device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(-15, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
 
             foreach (IMesh mesh in meshes)
             {
+                _device.SetTexture(0, mesh.BaseTexture);
                 _device.SetStreamSource(0, mesh.VertexBuffer, 0, mesh.Stride);
                 _device.VertexDeclaration = mesh.VertexDeclaration;
                 _device.Indices = mesh.IndexBuffer;
@@ -89,7 +91,7 @@ namespace _3dApplication
         }
         public VertexBuffer CreateVertexBuffer(int sizeInBytes, Vertex[] vertices)
         {
-            VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.PositionW, Pool.Managed);
+            VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.PositionW, Pool.Default);
             buffer.Lock(0, 0, LockFlags.None).WriteRange(vertices);
             buffer.Unlock();
 
@@ -107,6 +109,12 @@ namespace _3dApplication
             buffer.Unlock();
 
             return buffer;
+        }
+        public BaseTexture CreateBaseTexture(byte[] data)
+        {
+            Texture texture = Texture.FromMemory(_device, data);
+            BaseTexture baseTexture = new BaseTexture(texture.NativePointer);
+            return baseTexture;
         }
         #endregion      
 

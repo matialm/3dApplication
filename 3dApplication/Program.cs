@@ -8,7 +8,7 @@ namespace _3dApplication
     class Program
     {
         private static float _lastTick;
-        private static float _fps = 100;
+        private static float _fps = 1000f/60f;
 
         [STAThread]
         static void Main()
@@ -19,7 +19,7 @@ namespace _3dApplication
 
             IList<IMesh> meshes = new List<IMesh>();
             meshes.Add(new Cube(screen));
-            meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
+            //meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
 
             while (screen.IsAlive)
             {
