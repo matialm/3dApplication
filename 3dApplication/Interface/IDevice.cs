@@ -12,7 +12,7 @@ namespace _3dApplication
         void Show();
         bool Focus();
         void Render(IEnumerable<IMesh> meshes);
-        VertexBuffer CreateVertexBuffer(int sizeInBytes, Vertex[] vertices);
+        VertexBuffer CreateVertexBuffer(int sizeInBytes, VertexTexture[] vertices);
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
         BaseTexture CreateBaseTexture(byte[] data);

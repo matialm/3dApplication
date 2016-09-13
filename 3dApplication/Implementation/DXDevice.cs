@@ -88,7 +88,7 @@ namespace _3dApplication
             _device.EndScene();
             _device.Present();
         }
-        public VertexBuffer CreateVertexBuffer(int sizeInBytes, Vertex[] vertices)
+        public VertexBuffer CreateVertexBuffer(int sizeInBytes, VertexTexture[] vertices)
         {
             VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.PositionW, Pool.Default);
             buffer.Lock(0, 0, LockFlags.None).WriteRange(vertices);
