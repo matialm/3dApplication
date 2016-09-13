@@ -1,4 +1,5 @@
 ﻿using SharpDX.Direct3D9;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -10,6 +11,7 @@ namespace _3dApplication
         bool IsAlive { get; set; }
         bool Accesible { get; }
         Size Size { get; set; }
+        IntPtr Handle { get; }
 
         void Show();
         bool Focus();

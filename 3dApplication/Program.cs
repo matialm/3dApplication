@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.DirectInput;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
@@ -17,6 +18,7 @@ namespace _3dApplication
             IDevice screen = new DXDevice(camera);
             screen.Show();
             screen.Focus();
+            Input input = new Input(screen.Handle);
 
             IList<IMesh> meshes = new List<IMesh>();
             meshes.Add(new Cube(screen));
@@ -33,6 +35,7 @@ namespace _3dApplication
 
                         if (elapsedtime > _fps)
                         {
+                            camera.Update(input);
                             foreach (IMesh mesh in meshes)
                             {
                                 mesh.Rotate();

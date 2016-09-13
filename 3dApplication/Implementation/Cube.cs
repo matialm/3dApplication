@@ -195,6 +195,7 @@ namespace _3dApplication
             var rotation = Matrix.RotationX(_angle.X) * Matrix.RotationY(_angle.Y) * Matrix.RotationZ(_angle.Z);
             Transformation = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * rotation * Matrix.Translation(_center);
         }
+
         #endregion
 
         #endregion

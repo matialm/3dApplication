@@ -70,6 +70,7 @@
     <Compile Include="Implementation\DXDevice.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Implementation\Input.cs" />
     <Compile Include="Interface\IDevice.cs" />
     <Compile Include="Interface\IMesh.cs" />
     <Compile Include="Structures\Primitives.cs" />
