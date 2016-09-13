@@ -71,8 +71,7 @@ namespace _3dApplication
 
             _device.SetRenderState(RenderState.Lighting, false);
             _device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovRH((float)Math.PI / 4, _aspectRatio, 8f, 0f));
-            //_device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
-            _device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(-15, 0, 0), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
+            _device.SetTransform(TransformState.View, Matrix.LookAtRH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0)));
 
             foreach (IMesh mesh in meshes)
             {

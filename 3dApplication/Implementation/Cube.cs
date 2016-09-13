@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -129,7 +130,7 @@ namespace _3dApplication
 
 
             IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
-            PrimitiveCount = 12;
+            PrimitiveCount = 2 * (int)(Math.Ceiling((double)indexs.Count/4));
         }
         private void LoadVertexDeclaration(IDevice device)
         {
