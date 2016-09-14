@@ -67,12 +67,12 @@ namespace _3dApplication
 
             if (input.IsPressed(Key.D))
             {
-                _position.X -= 0.5f;
+                _position.X += 0.5f;
             }
 
             if (input.IsPressed(Key.A))
             {
-                _position.X += 0.5f;
+                _position.X -= 0.5f;
             }
 
             if (input.IsPressed(Key.Up))

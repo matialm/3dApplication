@@ -13,4 +13,10 @@ namespace _3dApplication
         public Vector3 Position { get; set; }
         public Color Color { get; set; }
     }
+
+    public struct HeightMapElement
+    {
+        public float Height { get; set; }
+        public Color Color { get; set; }
+    }
 }

@@ -188,8 +188,8 @@ namespace _3dApplication
         }
         public void Transform()
         {
-            //_angle.X += 0.05f;
-            //_angle.Y += 0.05f;
+            _angle.X += 0.05f;
+            _angle.Y += 0.05f;
             //_angle.Z += 0.05f;
 
             var rotation = Matrix.RotationX(_angle.X) * Matrix.RotationY(_angle.Y) * Matrix.RotationZ(_angle.Z);

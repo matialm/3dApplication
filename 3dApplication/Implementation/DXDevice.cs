@@ -66,7 +66,7 @@ namespace _3dApplication
         }
         public void Render(Camera camera, IEnumerable<IMesh> meshes)
         {
-            _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
             _device.BeginScene();
 
             //_device.SetRenderState(RenderState.FillMode, FillMode.Wireframe);

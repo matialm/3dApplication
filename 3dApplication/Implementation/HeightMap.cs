@@ -39,28 +39,29 @@ namespace _3dApplication
             _height = image.Height;
             _width = image.Width;
 
-            image.Dispose();
-            float[,] heightmap = new float[_height, _width];
-            int index = 0;
-            int k = 0;
+
+            HeightMapElement[,] heightmap = new HeightMapElement[_height, _width];
+
             for (int z = 0; z < _height; z++)
             {
                 for (int x = 0; x < _width; x++)
                 {
                     var color = bitmap.GetPixel(x, z);
                     float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
-                    heightmap[z, x] = height / 30.0f;
+                    heightmap[z, x] = new HeightMapElement { Height = height / 30.0f, Color = Color.FromRgba(color.ToArgb()) };
                 }
             }
 
+            image.Dispose();
+            bitmap.Dispose();
 
-            index = 0;
+            int index = 0;
             VertexColored[] vertices = new VertexColored[_height * _width];
             for(int z = 0; z < _height; z++)
             {
                 for(int x = 0; x < _width; x++)
                 {
-                    vertices[index] = new VertexColored { Position = new Vector3(x, heightmap[z, x], z), Color = Color.White };
+                    vertices[index] = new VertexColored { Position = new Vector3(x, heightmap[z, x].Height, z), Color = heightmap[z, x].Color };
                     index++;
                 }
             }
