@@ -16,7 +16,7 @@ namespace _3dApplication
         void Show();
         bool Focus();
         void Render(Camera camera, IEnumerable<IMesh> meshes);
-        VertexBuffer CreateVertexBuffer(int sizeInBytes, VertexTexture[] vertices);
+        VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct;
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
         BaseTexture CreateBaseTexture(byte[] data);

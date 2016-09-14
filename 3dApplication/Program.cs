@@ -21,6 +21,7 @@ namespace _3dApplication
             Input input = new Input(screen.Handle);
 
             IList<IMesh> meshes = new List<IMesh>();
+            meshes.Add(new HeightMap(screen));
             meshes.Add(new Cube(screen));
             //meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
 
@@ -38,7 +39,7 @@ namespace _3dApplication
                             camera.Update(input);
                             foreach (IMesh mesh in meshes)
                             {
-                                mesh.Rotate();
+                                mesh.Transform();
                             }
                             _lastTick = currTick;
                         }

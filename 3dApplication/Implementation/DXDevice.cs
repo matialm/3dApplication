@@ -69,9 +69,11 @@ namespace _3dApplication
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
             _device.BeginScene();
 
+            //_device.SetRenderState(RenderState.FillMode, FillMode.Wireframe);
+            //_device.SetRenderState(RenderState.CullMode, true);
             _device.SetRenderState(RenderState.Lighting, false);
-            _device.SetTransform(TransformState.Projection, Matrix.PerspectiveFovRH(camera.Fov, camera.AspectRatio, camera.Znear, camera.Zfar));
-            _device.SetTransform(TransformState.View, Matrix.LookAtRH(camera.Eye, camera.Target, camera.Up));
+            _device.SetTransform(TransformState.Projection, camera.Projection);
+            _device.SetTransform(TransformState.View, camera.View);
 
             foreach (IMesh mesh in meshes)
             {
@@ -88,9 +90,9 @@ namespace _3dApplication
             _device.EndScene();
             _device.Present();
         }
-        public VertexBuffer CreateVertexBuffer(int sizeInBytes, VertexTexture[] vertices)
+        public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
-            VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.PositionW, Pool.Default);
+            VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
             buffer.Lock(0, 0, LockFlags.None).WriteRange(vertices);
             buffer.Unlock();
 

@@ -18,6 +18,6 @@ namespace _3dApplication
         int PrimitiveCount { get; set; }
         int Stride { get; set; }
 
-        void Rotate();
+        void Transform();
     }
 }

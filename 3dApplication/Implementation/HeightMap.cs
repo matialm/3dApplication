@@ -1,0 +1,149 @@
+﻿using SharpDX;
+using SharpDX.Direct3D9;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Color = SharpDX.Color;
+
+namespace _3dApplication
+{
+    public class HeightMap : IMesh
+    {
+        #region Private
+        private int _height;
+        private int _width;
+        private Vector3 _center;
+        #region Attributes
+
+        #endregion
+
+        #region Methods
+        private void LoadProperties()
+        {
+            PrimitiveType = PrimitiveType.TriangleList;
+            BaseVertexIndex = 0;
+            MinVertexIndex = 0;
+            StartIndex = 0;
+            Stride = Marshal.SizeOf<VertexColored>();
+            Transformation = Matrix.Identity;
+        }
+        private void LoadVertices(IDevice device)
+        {
+            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.BMP");
+            Bitmap bitmap = new Bitmap(image);
+
+            _height = image.Height;
+            _width = image.Width;
+
+            image.Dispose();
+            float[,] heightmap = new float[_height, _width];
+            int index = 0;
+            int k = 0;
+            for (int z = 0; z < _height; z++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    var color = bitmap.GetPixel(x, z);
+                    float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
+                    heightmap[z, x] = height / 30.0f;
+                }
+            }
+
+
+            index = 0;
+            VertexColored[] vertices = new VertexColored[_height * _width];
+            for(int z = 0; z < _height; z++)
+            {
+                for(int x = 0; x < _width; x++)
+                {
+                    vertices[index] = new VertexColored { Position = new Vector3(x, heightmap[z, x], z), Color = Color.White };
+                    index++;
+                }
+            }
+
+            NumVertices = vertices.Count();
+            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
+        }
+        private void LoadIndexs(IDevice device)
+        {
+            int indexLength = (_width - 1) * (_height - 1) * 6;
+            PrimitiveCount = indexLength / 3;
+            int[] indexs = new int[indexLength];
+            for (int x = 0; x < _width-1; x++)
+            {
+                for (int z = 0; z < _height-1; z++)
+                {
+                    indexs[(x + z * (_width - 1)) * 6] = (x + 1) + (z + 1) * _width;
+                    indexs[(x + z * (_width - 1)) * 6 + 1] = (x + 1) + z * _width;
+                    indexs[(x + z * (_width - 1)) * 6 + 2] = x + z * _width;
+
+                    indexs[(x + z * (_width - 1)) * 6 + 3] = (x + 1) + (z + 1) * _width;
+                    indexs[(x + z * (_width - 1)) * 6 + 4] = x + z * _width;
+                    indexs[(x + z * (_width - 1)) * 6 + 5] = x + (z + 1) * _width;
+                }
+            }
+
+            IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+        }
+        private void LoadVertexDeclaration(IDevice device)
+        {
+            IList<VertexElement> vertexElements = new List<VertexElement>();
+            vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0));
+            vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Color, DeclarationMethod.Default, DeclarationUsage.Color, 0));
+            vertexElements.Add(VertexElement.VertexDeclarationEnd);
+
+            VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
+        }
+        private void LoadTexture(IDevice device)
+        {
+            BaseTexture = null;
+        }
+        private void CalculateCenter()
+        {
+            _center = new Vector3((float)(_width / 2), 0, (float)(_height / 2));
+        }
+        #endregion
+
+        #endregion
+
+        #region Public
+
+        #region Attributes
+        public VertexDeclaration VertexDeclaration { get; set; }
+        public PrimitiveType PrimitiveType { get; set; }
+        public VertexBuffer VertexBuffer { get; set; }
+        public IndexBuffer IndexBuffer { get; set; }
+        public BaseTexture BaseTexture { get; set; }
+        public Matrix Transformation { get; set; }
+        public int BaseVertexIndex { get; set; }
+        public int MinVertexIndex { get; set; }
+        public int NumVertices { get; set; }
+        public int StartIndex { get; set; }
+        public int PrimitiveCount { get; set; }
+        public int Stride { get; set; }
+        #endregion
+
+        #region Methods
+        public HeightMap(IDevice device)
+        {
+            LoadProperties();
+            LoadVertices(device);
+            LoadIndexs(device);
+            LoadVertexDeclaration(device);
+            LoadTexture(device);
+            CalculateCenter();
+        }
+        public void Transform()
+        {
+            Transformation = Matrix.Translation(-1*_center);
+        }
+
+        #endregion
+
+        #endregion
+    }
+}
