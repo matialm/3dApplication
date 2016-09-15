@@ -76,7 +76,7 @@ namespace _3dApplication
             _device.BeginScene();
 
             _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
-            _device.SetRenderState(RenderState.CullMode, _wireframe);
+            _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
             _device.SetRenderState(RenderState.Lighting, false);
             _device.SetTransform(TransformState.Projection, camera.Projection);
             _device.SetTransform(TransformState.View, camera.View);
