@@ -14,11 +14,11 @@ namespace _3dApplication
     public class HeightMap : IMesh
     {
         #region Private
+
+        #region Attributes
         private int _height;
         private int _width;
         private Vector3 _center;
-        #region Attributes
-
         #endregion
 
         #region Methods
@@ -28,10 +28,10 @@ namespace _3dApplication
             BaseVertexIndex = 0;
             MinVertexIndex = 0;
             StartIndex = 0;
-            Stride = Marshal.SizeOf<VertexColored>();
+            Stride = Marshal.SizeOf<VertexTexture>();
             Transformation = Matrix.Identity;
         }
-        private void LoadVertices(IDevice device)
+        private void LoadHeightMap(IDevice device)
         {
             Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
             Bitmap bitmap = new Bitmap(image);
@@ -40,7 +40,7 @@ namespace _3dApplication
             _width = image.Width;
 
 
-            HeightMapElement[,] heightmap = new HeightMapElement[_height, _width];
+            float[,] heightmap = new float[_height, _width];
 
             for (int z = 0; z < _height; z++)
             {
@@ -48,7 +48,7 @@ namespace _3dApplication
                 {
                     var color = bitmap.GetPixel(x, z);
                     float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
-                    heightmap[z, x] = new HeightMapElement { Height = height / 30.0f, Color = Color.FromRgba(color.ToArgb()) };
+                    heightmap[z, x] = height / 30.0f;
                 }
             }
 
@@ -56,56 +56,52 @@ namespace _3dApplication
             bitmap.Dispose();
 
             int index = 0;
-            VertexColored[] vertices = new VertexColored[_height * _width];
-            for(int z = 0; z < _height; z++)
+            int indexBufferLength = (_width - 1) * (_height - 1) * 6;
+
+            VertexTexture[] vertices = new VertexTexture[(_height - 1) * (_width - 1) * 4];
+            IList<int> indexs = new List<int>();
+
+            for (int z = 0; z < (_height - 1); z++)
             {
-                for(int x = 0; x < _width; x++)
+                for (int x = 0; x < (_width - 1); x++)
                 {
-                    vertices[index] = new VertexColored { Position = new Vector3(x, heightmap[z, x].Height, z), Color = heightmap[z, x].Color };
-                    index++;
+                    vertices[index] = new VertexTexture { Position = new Vector3(x, heightmap[z, x], z), UV = new Vector2(0f, 1f) };
+                    vertices[index+1] = new VertexTexture { Position = new Vector3(x, heightmap[z+1, x], z+1), UV = new Vector2(0f, 0f) };
+                    vertices[index+2] = new VertexTexture { Position = new Vector3(x+1, heightmap[z+1, x+1], z+1), UV = new Vector2(1f, 0f) };
+                    vertices[index+3] = new VertexTexture { Position = new Vector3(x+1, heightmap[z, x+1], z), UV = new Vector2(1f, 1f) };
+
+                    indexs.Add(index);
+                    indexs.Add(index + 1);
+                    indexs.Add(index + 3);
+
+                    indexs.Add(index + 3);
+                    indexs.Add(index + 1);
+                    indexs.Add(index + 2);
+
+                    index += 4;
                 }
             }
 
+            PrimitiveCount = indexBufferLength / 3;
             NumVertices = vertices.Count();
+
             VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
-        }
-        private void LoadIndexs(IDevice device)
-        {
-            int indexLength = (_width - 1) * (_height - 1) * 6;
-            PrimitiveCount = indexLength / 3;
-            int[] indexs = new int[indexLength];
-
-            int index = 0;
-            for (int z = 0; z < (_height-1); z++)
-            {
-                for (int x = 0; x < (_width-1); x++)
-                {
-                    indexs[index++] = x + _width * z;
-                    indexs[index++] = x + _width * (z+1);
-                    indexs[index++] = (x + 1) + _width * z;
-
-                    indexs[index++] = (x + 1) + _width * z;
-                    indexs[index++] = x + _width * (z + 1);
-                    indexs[index++] = (x + 1) + _width * (z + 1);
-                }
-            }
-
             IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
+
         private void LoadVertexDeclaration(IDevice device)
         {
             IList<VertexElement> vertexElements = new List<VertexElement>();
             vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0));
-            vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Color, DeclarationMethod.Default, DeclarationUsage.Color, 0));
+            vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
             VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
         }
         private void LoadTexture(IDevice device)
         {
-            //byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\TerrainTest.jpg");
-            //BaseTexture = device.CreateBaseTexture(data);
-            BaseTexture = null;
+            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\TerrainTest.jpg");
+            BaseTexture = device.CreateBaseTexture(data);
         }
         private void CalculateCenter()
         {
@@ -136,8 +132,7 @@ namespace _3dApplication
         public HeightMap(IDevice device)
         {
             LoadProperties();
-            LoadVertices(device);
-            LoadIndexs(device);
+            LoadHeightMap(device);
             LoadVertexDeclaration(device);
             LoadTexture(device);
             CalculateCenter();
