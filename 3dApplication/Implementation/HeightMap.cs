@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,8 +19,10 @@ namespace _3dApplication
         #region Attributes
         private int _height;
         private int _width;
+        private int _textureIndex;
         private Vector3 _center;
         private bool _diffuseMap;
+        private IList<BaseTexture> _baseTextures;
         #endregion
 
         #region Methods
@@ -158,17 +161,11 @@ namespace _3dApplication
 
             VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
         }
-        private void LoadTexture(IDevice device)
+        private void LoadTexture(IDevice device, string terrain)
         {
-            string terrain = "";
-
-            if (_diffuseMap)
-                terrain = "DiffuseMap01.jpg";
-            else
-                terrain = "TerrainTest.jpg";
-
             byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\" + terrain);
-            BaseTexture = device.CreateBaseTexture(data);
+            BaseTexture texture = device.CreateBaseTexture(data);
+            _baseTextures.Add(texture);
         }
         private void CalculateCenter()
         {
@@ -185,7 +182,7 @@ namespace _3dApplication
         public PrimitiveType PrimitiveType { get; set; }
         public VertexBuffer VertexBuffer { get; set; }
         public IndexBuffer IndexBuffer { get; set; }
-        public BaseTexture BaseTexture { get; set; }
+        public BaseTexture BaseTexture { get { return _baseTextures[_textureIndex]; } }
         public Matrix Transformation { get; set; }
         public int BaseVertexIndex { get; set; }
         public int MinVertexIndex { get; set; }
@@ -193,6 +190,7 @@ namespace _3dApplication
         public int StartIndex { get; set; }
         public int PrimitiveCount { get; set; }
         public int Stride { get; set; }
+        public Input Input { get; set; }
         #endregion
 
         #region Methods
@@ -200,9 +198,10 @@ namespace _3dApplication
         {
 
         }
-
         public HeightMap(IDevice device, bool diffuseMap)
         {
+            _textureIndex = 0;
+            _baseTextures = new List<BaseTexture>();
             _diffuseMap = diffuseMap;
 
             LoadProperties();
@@ -216,12 +215,30 @@ namespace _3dApplication
                 LoadHeightMap(device);
 
             LoadVertexDeclaration(device);
-            LoadTexture(device);
+
+            if (!_diffuseMap)
+            {
+                LoadTexture(device, "TerrainTest.jpg");
+                LoadTexture(device, "Terrain01.jpg");
+            }
+            else
+                LoadTexture(device, "DiffuseMap01.jpg");
+
             CalculateCenter();
         }
         public void Transform()
         {
             Transformation = Matrix.Translation(-1*_center);
+
+            if(Input.KeyDown(Key.D1))
+            {
+                _textureIndex = 0;
+            }
+
+            if (Input.KeyDown(Key.D2))
+            {
+                _textureIndex = 1;
+            }
         }
 
         #endregion
