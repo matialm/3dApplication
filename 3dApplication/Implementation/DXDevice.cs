@@ -1,10 +1,13 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Color = SharpDX.Color;
+using Device = SharpDX.Direct3D9.Device;
+using DeviceType = SharpDX.Direct3D9.DeviceType;
 
 namespace _3dApplication
 {
@@ -42,6 +45,8 @@ namespace _3dApplication
                 return _device.TestCooperativeLevel().Success;
             }
         }
+
+        public Input Input { get; set; }
         #endregion
 
         #region Methods
@@ -117,7 +122,20 @@ namespace _3dApplication
             BaseTexture baseTexture = new BaseTexture(texture.NativePointer);
             return baseTexture;
         }
-        #endregion      
+
+        public void CaptureInput()
+        {
+            if(Input.IsPressed(Key.Escape))
+            {
+                IsAlive = false;
+            }
+
+            if(Input.IsPressed(Key.F1))
+            {
+                
+            }
+        }
+        #endregion
 
         #endregion
     }

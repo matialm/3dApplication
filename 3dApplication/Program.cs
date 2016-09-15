@@ -19,6 +19,7 @@ namespace _3dApplication
             screen.Show();
             screen.Focus();
             Input input = new Input(screen.Handle);
+            screen.Input = input;
 
             IList<IMesh> meshes = new List<IMesh>();
             meshes.Add(new HeightMap(screen));
@@ -34,10 +35,7 @@ namespace _3dApplication
                         float currTick = Environment.TickCount;
                         float elapsedtime = currTick - _lastTick;
 
-                        if(input.IsPressed(Key.Escape))
-                        {
-                            screen.IsAlive = false;
-                        }
+                        screen.CaptureInput();
 
                         if (elapsedtime > _fps)
                         {

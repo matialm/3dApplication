@@ -12,6 +12,7 @@ namespace _3dApplication
         bool Accesible { get; }
         Size Size { get; set; }
         IntPtr Handle { get; }
+        Input Input { get; set; }
 
         void Show();
         bool Focus();
@@ -20,6 +21,7 @@ namespace _3dApplication
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
         BaseTexture CreateBaseTexture(byte[] data);
+        void CaptureInput();
         void Dispose();
     }
 }
