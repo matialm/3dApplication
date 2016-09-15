@@ -74,17 +74,19 @@ namespace _3dApplication
             int indexLength = (_width - 1) * (_height - 1) * 6;
             PrimitiveCount = indexLength / 3;
             int[] indexs = new int[indexLength];
-            for (int x = 0; x < _width - 1; x++)
-            {
-                for (int z = 0; z < _height - 1; z++)
-                {
-                    indexs[(x + z * (_width - 1)) * 6] = (x + 1) + (z + 1) * _width;
-                    indexs[(x + z * (_width - 1)) * 6 + 1] = (x + 1) + z * _width;
-                    indexs[(x + z * (_width - 1)) * 6 + 2] = x + z * _width;
 
-                    indexs[(x + z * (_width - 1)) * 6 + 3] = (x + 1) + (z + 1) * _width;
-                    indexs[(x + z * (_width - 1)) * 6 + 4] = x + z * _width;
-                    indexs[(x + z * (_width - 1)) * 6 + 5] = x + (z + 1) * _width;
+            int index = 0;
+            for (int z = 0; z < (_height-1); z++)
+            {
+                for (int x = 0; x < (_width-1); x++)
+                {
+                    indexs[index++] = x + _width * z;
+                    indexs[index++] = x + _width * (z+1);
+                    indexs[index++] = (x + 1) + _width * z;
+
+                    indexs[index++] = (x + 1) + _width * z;
+                    indexs[index++] = x + _width * (z + 1);
+                    indexs[index++] = (x + 1) + _width * (z + 1);
                 }
             }
 
