@@ -35,6 +35,7 @@ namespace _3dApplication
                         float currTick = Environment.TickCount;
                         float elapsedtime = currTick - _lastTick;
 
+                        input.Update();
                         screen.CaptureInput();
 
                         if (elapsedtime > _fps)
@@ -55,6 +56,7 @@ namespace _3dApplication
                 Application.DoEvents();
             }
 
+            input.Dispose();
             screen.Dispose();
         }
     }

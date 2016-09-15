@@ -55,44 +55,44 @@ namespace _3dApplication
 
         public void Update(Input input)
         {
-            if (input.IsPressed(Key.S))
+            if (input.KeyDown(Key.S))
             {
                 _position.Z += 0.5f;
             }
 
-            if (input.IsPressed(Key.W))
+            if (input.KeyDown(Key.W))
             {
                 _position.Z -= 0.5f;
             }
 
-            if (input.IsPressed(Key.D))
+            if (input.KeyDown(Key.D))
             {
                 _position.X -= 0.5f;
             }
 
-            if (input.IsPressed(Key.A))
+            if (input.KeyDown(Key.A))
             {
                 _position.X += 0.5f;
             }
 
-            if (input.IsPressed(Key.Up))
+            if (input.KeyDown(Key.Up))
             {
                 _position.Y -= 0.5f;
                 //_angle.X -= 1f * (float)(Math.PI/180);
             }
 
-            if (input.IsPressed(Key.Down))
+            if (input.KeyDown(Key.Down))
             {
                 _position.Y += 0.5f;
                 //_angle.X += 1f * (float)(Math.PI / 180);
             }
 
-            if (input.IsPressed(Key.Right))
+            if (input.KeyDown(Key.Right))
             {
                 _angle.Y += 1f * (float)(Math.PI / 180);
             }
 
-            if (input.IsPressed(Key.Left))
+            if (input.KeyDown(Key.Left))
             {
                 _angle.Y -= 1f * (float)(Math.PI / 180);
             }

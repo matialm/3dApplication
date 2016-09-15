@@ -16,8 +16,9 @@ namespace _3dApplication
         #region Private
 
         #region Attributes
-        private Device _device { get; set; }
-        private Camera _camera { get; set; }
+        private Device _device;
+        private Camera _camera;
+        private bool _wireframe = false;
         #endregion
 
         #region Methods
@@ -74,8 +75,8 @@ namespace _3dApplication
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
             _device.BeginScene();
 
-            //_device.SetRenderState(RenderState.FillMode, FillMode.Wireframe);
-            //_device.SetRenderState(RenderState.CullMode, true);
+            _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
+            _device.SetRenderState(RenderState.CullMode, _wireframe);
             _device.SetRenderState(RenderState.Lighting, false);
             _device.SetTransform(TransformState.Projection, camera.Projection);
             _device.SetTransform(TransformState.View, camera.View);
@@ -125,14 +126,14 @@ namespace _3dApplication
 
         public void CaptureInput()
         {
-            if(Input.IsPressed(Key.Escape))
+            if(Input.KeyPress(Key.Escape))
             {
                 IsAlive = false;
             }
 
-            if(Input.IsPressed(Key.F1))
+            if(Input.KeyPress(Key.F1))
             {
-                
+                _wireframe = !_wireframe;
             }
         }
         #endregion

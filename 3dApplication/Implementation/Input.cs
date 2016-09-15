@@ -10,6 +10,8 @@ namespace _3dApplication
         #region Attributes
         private Keyboard _keyboard;
         private Mouse _mouse;
+        private bool[] _lastKeyboardState;
+        private bool[] _actualKeyboardState;
         #endregion
 
         #region Methods
@@ -33,11 +35,50 @@ namespace _3dApplication
             _mouse = new Mouse(directInput);
             _mouse.SetCooperativeLevel(handler, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
             _mouse.Acquire();
+
+            int[] values = (int[])Enum.GetValues(typeof(Key));
+            int max = values[values.Length - 1];
+            _actualKeyboardState = new bool[max];
+            _lastKeyboardState = new bool[max];
+
+            for (int i = 0; i < max; i++)
+            {
+                _actualKeyboardState[i] = false;
+                _lastKeyboardState[i] = false;
+            }
         }
 
-        public bool IsPressed(Key key)
+        public void Update()
         {
-            return _keyboard.GetCurrentState().IsPressed(key);
+            Array.Copy(_actualKeyboardState, _lastKeyboardState, _lastKeyboardState.Length);
+
+            for (int i = 0; i < _actualKeyboardState.Length; i++)
+            {
+                _actualKeyboardState[i] = _keyboard.GetCurrentState().IsPressed((Key)(i + 1));
+            }
+        }
+
+        public bool KeyDown(Key key)
+        {
+            return _actualKeyboardState[(int)(key - 1)];
+        }
+
+        public bool KeyUp(Key key)
+        {
+            return !_actualKeyboardState[(int)(key - 1)] && _lastKeyboardState[(int)(key - 1)];
+        }
+
+        public bool KeyPress(Key key)
+        {
+            return _actualKeyboardState[(int)(key - 1)] && !_lastKeyboardState[(int)(key - 1)];
+        }
+
+        public void Dispose()
+        {
+            _keyboard.Unacquire();
+            _keyboard.Dispose();
+            _mouse.Unacquire();
+            _mouse.Dispose();
         }
 
         #endregion
