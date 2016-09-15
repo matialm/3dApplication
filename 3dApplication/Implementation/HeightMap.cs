@@ -19,6 +19,7 @@ namespace _3dApplication
         private int _height;
         private int _width;
         private Vector3 _center;
+        private bool _diffuseMap;
         #endregion
 
         #region Methods
@@ -38,7 +39,6 @@ namespace _3dApplication
 
             _height = image.Height;
             _width = image.Width;
-
 
             float[,] heightmap = new float[_height, _width];
 
@@ -88,7 +88,67 @@ namespace _3dApplication
             VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
             IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
+        private void LoadVertices(IDevice device)
+        {
+            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
+            Bitmap bitmap = new Bitmap(image);
 
+            _height = image.Height;
+            _width = image.Width;
+
+
+            float[,] heightmap = new float[_height, _width];
+
+            for (int z = 0; z < _height; z++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    var color = bitmap.GetPixel(x, z);
+                    float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
+                    heightmap[z, x] = height / 30.0f;
+                }
+            }
+
+            image.Dispose();
+            bitmap.Dispose();
+
+            int index = 0;
+            VertexTexture[] vertices = new VertexTexture[_height * _width];
+            for (int z = 0; z < _height; z++)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    vertices[index] = new VertexTexture { Position = new Vector3(x, heightmap[z, x], z), UV = new Vector2((float)x / _width, (float)z / _height) };
+                    index++;
+                }
+            }
+
+            NumVertices = vertices.Count();
+            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
+        }
+        private void LoadIndexs(IDevice device)
+        {
+            int indexLength = (_width - 1) * (_height - 1) * 6;
+            PrimitiveCount = indexLength / 3;
+            int[] indexs = new int[indexLength];
+
+            int index = 0;
+            for (int z = 0; z < (_height - 1); z++)
+            {
+                for (int x = 0; x < (_width - 1); x++)
+                {
+                    indexs[index++] = x + _width * z;
+                    indexs[index++] = x + _width * (z + 1);
+                    indexs[index++] = (x + 1) + _width * z;
+
+                    indexs[index++] = (x + 1) + _width * z;
+                    indexs[index++] = x + _width * (z + 1);
+                    indexs[index++] = (x + 1) + _width * (z + 1);
+                }
+            }
+
+            IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+        }
         private void LoadVertexDeclaration(IDevice device)
         {
             IList<VertexElement> vertexElements = new List<VertexElement>();
@@ -100,7 +160,14 @@ namespace _3dApplication
         }
         private void LoadTexture(IDevice device)
         {
-            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\TerrainTest.jpg");
+            string terrain = "";
+
+            if (_diffuseMap)
+                terrain = "DiffuseMap01.jpg";
+            else
+                terrain = "TerrainTest.jpg";
+
+            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\" + terrain);
             BaseTexture = device.CreateBaseTexture(data);
         }
         private void CalculateCenter()
@@ -129,10 +196,25 @@ namespace _3dApplication
         #endregion
 
         #region Methods
-        public HeightMap(IDevice device)
+        public HeightMap(IDevice device) : this(device, false)
         {
+
+        }
+
+        public HeightMap(IDevice device, bool diffuseMap)
+        {
+            _diffuseMap = diffuseMap;
+
             LoadProperties();
-            LoadHeightMap(device);
+
+            if(_diffuseMap)
+            {
+                LoadVertices(device);
+                LoadIndexs(device);
+            }
+            else
+                LoadHeightMap(device);
+
             LoadVertexDeclaration(device);
             LoadTexture(device);
             CalculateCenter();

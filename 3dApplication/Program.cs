@@ -34,6 +34,11 @@ namespace _3dApplication
                         float currTick = Environment.TickCount;
                         float elapsedtime = currTick - _lastTick;
 
+                        if(input.IsPressed(Key.Escape))
+                        {
+                            screen.IsAlive = false;
+                        }
+
                         if (elapsedtime > _fps)
                         {
                             camera.Update(input);
