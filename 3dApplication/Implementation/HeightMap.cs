@@ -33,7 +33,7 @@ namespace _3dApplication
         }
         private void LoadVertices(IDevice device)
         {
-            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.BMP");
+            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
             Bitmap bitmap = new Bitmap(image);
 
             _height = image.Height;
@@ -74,9 +74,9 @@ namespace _3dApplication
             int indexLength = (_width - 1) * (_height - 1) * 6;
             PrimitiveCount = indexLength / 3;
             int[] indexs = new int[indexLength];
-            for (int x = 0; x < _width-1; x++)
+            for (int x = 0; x < _width - 1; x++)
             {
-                for (int z = 0; z < _height-1; z++)
+                for (int z = 0; z < _height - 1; z++)
                 {
                     indexs[(x + z * (_width - 1)) * 6] = (x + 1) + (z + 1) * _width;
                     indexs[(x + z * (_width - 1)) * 6 + 1] = (x + 1) + z * _width;
@@ -101,6 +101,8 @@ namespace _3dApplication
         }
         private void LoadTexture(IDevice device)
         {
+            //byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\TerrainTest.jpg");
+            //BaseTexture = device.CreateBaseTexture(data);
             BaseTexture = null;
         }
         private void CalculateCenter()

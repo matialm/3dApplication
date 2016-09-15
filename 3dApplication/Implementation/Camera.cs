@@ -41,7 +41,7 @@ namespace _3dApplication
             _fov = (float)Math.PI / 4;
             _zNear = 8f;
             _zFar = 0f;
-            _eye = new Vector3(0, 10, 15);
+            _eye = new Vector3(0, 10, -15);
             _target = new Vector3(0, 0, 0);
             _up = new Vector3(0, 1, 0);
             View = Matrix.Identity;
@@ -57,33 +57,33 @@ namespace _3dApplication
         {
             if (input.IsPressed(Key.S))
             {
-                _position.Z -= 0.5f;
+                _position.Z += 0.5f;
             }
 
             if (input.IsPressed(Key.W))
             {
-                _position.Z += 0.5f;
+                _position.Z -= 0.5f;
             }
 
             if (input.IsPressed(Key.D))
             {
-                _position.X += 0.5f;
+                _position.X -= 0.5f;
             }
 
             if (input.IsPressed(Key.A))
             {
-                _position.X -= 0.5f;
+                _position.X += 0.5f;
             }
 
             if (input.IsPressed(Key.Up))
             {
-                _position.Y += 0.5f;
+                _position.Y -= 0.5f;
                 //_angle.X -= 1f * (float)(Math.PI/180);
             }
 
             if (input.IsPressed(Key.Down))
             {
-                _position.Y -= 0.5f;
+                _position.Y += 0.5f;
                 //_angle.X += 1f * (float)(Math.PI / 180);
             }
 
