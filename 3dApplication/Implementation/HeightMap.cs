@@ -108,7 +108,7 @@ namespace _3dApplication
                 {
                     var color = bitmap.GetPixel(x, z);
                     float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
-                    heightmap[z, x] = height / 30.0f;
+                    heightmap[z, x] = height;
                 }
             }
 
