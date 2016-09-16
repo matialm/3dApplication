@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Color = SharpDX.Color;
 
 namespace _3dApplication
 {
@@ -19,6 +18,8 @@ namespace _3dApplication
         #region Attributes
         private int _height;
         private int _width;
+        private float _heightFactor = 20.0f;
+        private float _min = float.MaxValue;
         private int _textureIndex;
         private Vector3 _center;
         private bool _diffuseMap;
@@ -44,14 +45,16 @@ namespace _3dApplication
             _width = image.Width;
 
             float[,] heightmap = new float[_height, _width];
-
             for (int z = 0; z < _height; z++)
             {
                 for (int x = 0; x < _width; x++)
                 {
                     var color = bitmap.GetPixel(x, z);
                     float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
-                    heightmap[z, x] = height / 30.0f;
+                    heightmap[z, x] = height / _heightFactor;
+
+                    if (heightmap[z, x] < _min)
+                        _min = heightmap[z, x];
                 }
             }
 
@@ -108,7 +111,10 @@ namespace _3dApplication
                 {
                     var color = bitmap.GetPixel(x, z);
                     float height = (float)Math.Sqrt(Math.Pow(color.R, 2) + Math.Pow(color.G, 2) + Math.Pow(color.B, 2) + Math.Pow(color.A, 2));
-                    heightmap[z, x] = height / 30.0f;
+                    heightmap[z, x] = height / _heightFactor;
+
+                    if (heightmap[z, x] < _min)
+                        _min = heightmap[z, x];
                 }
             }
 
@@ -169,7 +175,7 @@ namespace _3dApplication
         }
         private void CalculateCenter()
         {
-            _center = new Vector3((float)(_width / 2), 0, (float)(_height / 2));
+            _center = new Vector3(_width / 2, _min, _height / 2);
         }
         #endregion
 
