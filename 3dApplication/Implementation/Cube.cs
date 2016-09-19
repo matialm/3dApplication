@@ -37,40 +37,40 @@ namespace _3dApplication
             VertexTexture[] vertices = new VertexTexture[24];
 
             //frente
-            vertices[0] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[1] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[2] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[3] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[0] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[1] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[2] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[3] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
 
             //contra frente
-            vertices[4] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[5] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[6] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[7] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[4] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[5] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[6] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[7] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
 
             //lateral izquierdo
-            vertices[8] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[9] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[10] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[11] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[8] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[9] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[10] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[11] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
 
             //lateral derecho
-            vertices[12] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[13] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[14] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[15] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[12] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[13] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[14] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[15] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
 
             //techo
-            vertices[16] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[17] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[18] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[19] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[16] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[17] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[18] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[19] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 1.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
 
             //piso
-            vertices[20] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 1) };
-            vertices[21] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(0, 0) };
-            vertices[22] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, -1.0f + _position.Z), UV = new Vector2(1, 0) };
-            vertices[23] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 1) };
+            vertices[20] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(0, 1) };
+            vertices[21] = new VertexTexture { Position = new Vector3(0.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(0, 0) };
+            vertices[22] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 0.0f + _position.Z), UV = new Vector2(1, 0) };
+            vertices[23] = new VertexTexture { Position = new Vector3(1.0f + _position.X, 0.0f + _position.Y, 1.0f + _position.Z), UV = new Vector2(1, 1) };
 
             NumVertices = vertices.Count();
             VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
