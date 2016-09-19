@@ -108,7 +108,7 @@ namespace _3dApplication
             //}
 
             Projection = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _zNear, _zFar);
-            View = Matrix.Translation(_position) * Matrix.RotationYawPitchRoll(_angle.Y, _angle.X, 0) * Matrix.LookAtLH(_eye, _target, _up);
+            View = Matrix.RotationYawPitchRoll(_angle.Y, _angle.X, 0) * Matrix.Translation(_position) * Matrix.LookAtLH(_eye, _target, _up);
         }
 
         #endregion
