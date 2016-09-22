@@ -1,5 +1,4 @@
-﻿using SharpDX.DirectInput;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
@@ -22,8 +21,9 @@ namespace _3dApplication
             screen.Input = input;
 
             IList<IMesh> meshes = new List<IMesh>();
-            meshes.Add(new HeightMap(screen) { Input = input });
-            meshes.Add(new Cube(screen));
+            meshes.Add(new Skybox(screen));
+            //meshes.Add(new HeightMap(screen) { Input = input });
+            //meshes.Add(new Cube(screen));
             //meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
 
             while (screen.IsAlive)

@@ -45,7 +45,6 @@ namespace _3dApplication
             _target = new Vector3(0, 0, 0);
             _up = new Vector3(0, 1, 0);
             View = Matrix.Identity;
-            View = Matrix.Identity;
         }
 
         public void SetSize(float width, float height)
