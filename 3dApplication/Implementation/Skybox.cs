@@ -183,6 +183,11 @@ namespace _3dApplication
             Transformation = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * Matrix.Translation(_center);
         }
 
+        public void SetSize(int mapWidth)
+        {
+            _scale = 2 * mapWidth;
+        }
+
         #endregion
 
         #endregion

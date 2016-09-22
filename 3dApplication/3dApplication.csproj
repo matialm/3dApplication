@@ -100,6 +100,7 @@
     <Content Include="Textures\DiffuseMap01.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\Skybox.jpg" />
     <Content Include="Textures\Terrain01.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

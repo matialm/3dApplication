@@ -247,6 +247,11 @@ namespace _3dApplication
             }
         }
 
+        public int GetWidth()
+        {
+            return _width;
+        }
+
         #endregion
 
         #endregion

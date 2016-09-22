@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -21,9 +22,14 @@ namespace _3dApplication
             screen.Input = input;
 
             IList<IMesh> meshes = new List<IMesh>();
-            meshes.Add(new Skybox(screen));
-            //meshes.Add(new HeightMap(screen) { Input = input });
-            //meshes.Add(new Cube(screen));
+
+            var heightMap = new HeightMap(screen) { Input = input };
+            var skybox = new Skybox(screen);
+            skybox.SetSize(heightMap.GetWidth());
+
+            meshes.Add(skybox);
+            meshes.Add(heightMap);
+            meshes.Add(new Cube(screen));
             //meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
 
             while (screen.IsAlive)
