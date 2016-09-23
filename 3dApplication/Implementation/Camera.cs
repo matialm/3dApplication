@@ -96,9 +96,9 @@ namespace _3dApplication
                 _angle.Y -= 1f * (float)(Math.PI / 180);
             }
 
-            //if(input.KeyDown(Key.PageDown))
+            //if (input.KeyDown(Key.PageDown))
             //{
-            //    _angle.X -= 1f * (float)(Math.PI/180);
+            //    _angle.X -= 1f * (float)(Math.PI / 180);
             //}
 
             //if (input.KeyDown(Key.PageUp))
