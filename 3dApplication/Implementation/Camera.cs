@@ -96,15 +96,15 @@ namespace _3dApplication
                 _angle.Y -= 1f * (float)(Math.PI / 180);
             }
 
-            //if (input.KeyDown(Key.PageDown))
-            //{
-            //    _angle.X -= 1f * (float)(Math.PI / 180);
-            //}
+            if (input.KeyDown(Key.PageDown))
+            {
+                _angle.X -= 1f * (float)(Math.PI / 180);
+            }
 
-            //if (input.KeyDown(Key.PageUp))
-            //{
-            //    _angle.X += 1f * (float)(Math.PI / 180);
-            //}
+            if (input.KeyDown(Key.PageUp))
+            {
+                _angle.X += 1f * (float)(Math.PI / 180);
+            }
 
             Projection = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _zNear, _zFar);
             View = Matrix.RotationYawPitchRoll(_angle.Y, _angle.X, 0) * Matrix.Translation(_position) * Matrix.LookAtLH(_eye, _target, _up);

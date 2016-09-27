@@ -1,5 +1,4 @@
-﻿using SharpDX;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D9;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
@@ -78,8 +77,6 @@ namespace _3dApplication
             _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
             _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
             _device.SetRenderState(RenderState.Lighting, false);
-            _device.SetTransform(TransformState.Projection, camera.Projection);
-            _device.SetTransform(TransformState.View, camera.View);
 
             foreach (IMesh mesh in meshes)
             {
@@ -87,8 +84,12 @@ namespace _3dApplication
                 _device.SetStreamSource(0, mesh.VertexBuffer, 0, mesh.Stride);
                 _device.VertexDeclaration = mesh.VertexDeclaration;
                 _device.Indices = mesh.IndexBuffer;
+               
+                _device.PixelShader = mesh.PixelShader;
+                _device.VertexShader = mesh.VertexShader;
 
-                _device.SetTransform(TransformState.World, mesh.Transformation);
+                _device.VertexShader.Function.ConstantTable.SetValue(_device, "viewProjection", camera.View * camera.Projection);
+                _device.VertexShader.Function.ConstantTable.SetValue(_device, "transformation", mesh.Transformation);
 
                 _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
             }
@@ -98,7 +99,7 @@ namespace _3dApplication
         }
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
-            VertexBuffer buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
+            var buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
             buffer.Lock(0, 0, LockFlags.None).WriteRange(vertices);
             buffer.Unlock();
 
@@ -106,12 +107,12 @@ namespace _3dApplication
         }
         public VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements)
         {
-            VertexDeclaration VertexDeclaration = new VertexDeclaration(_device, vertexElements);
+            var VertexDeclaration = new VertexDeclaration(_device, vertexElements);
             return VertexDeclaration;
         }
         public IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs)
         {
-            IndexBuffer buffer = new IndexBuffer(_device, sizeInBytes, Usage.None, Pool.Managed, false);
+            var buffer = new IndexBuffer(_device, sizeInBytes, Usage.None, Pool.Managed, false);
             buffer.Lock(0, 0, LockFlags.None).WriteRange(indexs);
             buffer.Unlock();
 
@@ -119,11 +120,24 @@ namespace _3dApplication
         }
         public BaseTexture CreateBaseTexture(byte[] data)
         {
-            Texture texture = Texture.FromMemory(_device, data);
-            BaseTexture baseTexture = new BaseTexture(texture.NativePointer);
+            var texture = Texture.FromMemory(_device, data);
+            var baseTexture = new BaseTexture(texture.NativePointer);
             return baseTexture;
         }
+        public PixelShader CreatePixelShader(byte[] data, string entryPoint)
+        {
+            var result = ShaderBytecode.Compile(data, entryPoint, "ps_2_0", ShaderFlags.None);
+            var pixelShader = new PixelShader(_device, result.Bytecode);
 
+            return pixelShader;
+        }
+        public VertexShader CreateVertexShader(byte[] data, string entryPoint)
+        {
+            var result = ShaderBytecode.Compile(data, entryPoint, "vs_2_0", ShaderFlags.None);
+            var vertexShader = new VertexShader(_device, result.Bytecode);
+
+            return vertexShader;
+        }
         public void CaptureInput()
         {
             if(Input.KeyPress(Key.Escape))

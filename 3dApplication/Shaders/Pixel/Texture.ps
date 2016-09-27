@@ -1,0 +1,23 @@
+struct PixelToFrame
+{
+	float4 Color : COLOR0;
+};
+
+struct VertexToPixel
+{
+	float4 Position     : POSITION;
+	float2 TexCoords    : TEXCOORD0;
+};
+
+Texture coloredTexture;
+
+sampler ColoredTextureSampler = sampler_state { texture = <coloredTexture>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
+
+PixelToFrame TexturePixel(VertexToPixel PSIn)
+{
+	PixelToFrame Output = (PixelToFrame)0;
+
+	Output.Color = tex2D(ColoredTextureSampler, PSIn.TexCoords);
+
+	return Output;
+}

@@ -144,6 +144,14 @@ namespace _3dApplication
             byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\Skybox.jpg");
             BaseTexture = device.CreateBaseTexture(data);
         }
+        private void LoadShaders(IDevice device)
+        {
+            byte[] dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
+            byte[] dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
+
+            PixelShader = device.CreatePixelShader(dataPS, "TexturePixel");
+            VertexShader = device.CreateVertexShader(dataVS, "TextureAndTransform");
+        }
         private void CalculateCenter(VertexTexture[] vertices)
         {
             Vector3 vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
@@ -159,6 +167,8 @@ namespace _3dApplication
         public VertexDeclaration VertexDeclaration { get; set; }
         public PrimitiveType PrimitiveType { get; set; }
         public VertexBuffer VertexBuffer { get; set; }
+        public VertexShader VertexShader { get; set; }
+        public PixelShader PixelShader { get; set; }
         public IndexBuffer IndexBuffer { get; set; }
         public BaseTexture BaseTexture { get; set; }
         public Matrix Transformation { get; set; }
@@ -178,6 +188,7 @@ namespace _3dApplication
             LoadIndexs(device);
             LoadTexture(device);
             LoadVertexDeclaration(device);
+            LoadShaders(device);
         }
         public void Transform()
         {

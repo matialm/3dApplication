@@ -20,6 +20,8 @@ namespace _3dApplication
         VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct;
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
+        VertexShader CreateVertexShader(byte[] data, string entryPoint);
+        PixelShader CreatePixelShader(byte[] data, string entryPoitn);
         BaseTexture CreateBaseTexture(byte[] data);
         void CaptureInput();
         void Dispose();

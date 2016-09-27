@@ -173,6 +173,14 @@ namespace _3dApplication
             BaseTexture texture = device.CreateBaseTexture(data);
             _baseTextures.Add(texture);
         }
+        private void LoadShaders(IDevice device)
+        {
+            byte[] dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
+            byte[] dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
+
+            PixelShader = device.CreatePixelShader(dataPS, "TexturePixel");
+            VertexShader = device.CreateVertexShader(dataVS, "TextureAndTransform");
+        }
         private void CalculateCenter()
         {
             _center = new Vector3(_width / 2, _min, _height / 2);
@@ -187,6 +195,8 @@ namespace _3dApplication
         public VertexDeclaration VertexDeclaration { get; set; }
         public PrimitiveType PrimitiveType { get; set; }
         public VertexBuffer VertexBuffer { get; set; }
+        public VertexShader VertexShader { get; set; }
+        public PixelShader PixelShader { get; set; }
         public IndexBuffer IndexBuffer { get; set; }
         public BaseTexture BaseTexture { get { return _baseTextures[_textureIndex]; } }
         public Matrix Transformation { get; set; }
@@ -216,20 +226,18 @@ namespace _3dApplication
             {
                 LoadVertices(device);
                 LoadIndexs(device);
+                LoadTexture(device, "DiffuseMap01.jpg");
             }
             else
-                LoadHeightMap(device);
-
-            LoadVertexDeclaration(device);
-
-            if (!_diffuseMap)
             {
+                LoadHeightMap(device);
                 LoadTexture(device, "TerrainTest.jpg");
                 LoadTexture(device, "Terrain01.jpg");
             }
-            else
-                LoadTexture(device, "DiffuseMap01.jpg");
 
+            LoadVertexDeclaration(device);
+
+            LoadShaders(device);
             CalculateCenter();
         }
         public void Transform()
