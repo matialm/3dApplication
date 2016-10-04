@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace _3dApplication
 {
-    public class HeightMap : IMesh
+    public class HeightMap : Mesh
     {
         #region Private
 
@@ -20,44 +20,16 @@ namespace _3dApplication
         private int _width;
         private float _heightFactor = 20.0f;
         private float _min = float.MaxValue;
-        private int _textureIndex;
         private bool _diffuseMap;
-
-        private int _stride;
-        private float _scale;
-        private int _verticesCount;
-        private int _primitiveCount;
-        private int _startIndex;
-        private int _baseVertexIndex;
-        private int _minVertexIndex;
-
-        private Matrix _world;
-        private Vector3 _angle;
-        private Vector3 _position;
         private Vector3 _center;
-
-        private IDevice _device;
         private Input _input;
-        private VertexDeclaration _vertexDeclaration;
-        private VertexBuffer _vertexBuffer;
-        private IndexBuffer _indexBuffer;
-        private IList<BaseTexture> _baseTextures;
-        private PixelShader _pixelShader;
-        private VertexShader _vertexShader;
-        private PrimitiveType _primitiveType;
         #endregion
 
         #region Methods
         private void LoadProperties()
         {
-            _device = DXDevice.Instance();
             _input = Input.Instance();
-            _primitiveType = PrimitiveType.TriangleList;
-            _baseVertexIndex = 0;
-            _minVertexIndex = 0;
-            _startIndex = 0;
-            _stride = Marshal.SizeOf<VertexTexture>();
-            _world = Matrix.Identity;
+            Stride = Marshal.SizeOf<VertexTexture>();
         }
         private void LoadHeightMap()
         {
@@ -111,11 +83,11 @@ namespace _3dApplication
                 }
             }
 
-            _primitiveCount = indexBufferLength / 3;
-            _verticesCount = vertices.Count();
+            PrimitiveCount = indexBufferLength / 3;
+            VertexCount = vertices.Count();
 
-            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
-            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+            VertexBuffer = _device.CreateVertexBuffer(Stride * VertexCount, vertices);
+            IndexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
         private void LoadVertices()
         {
@@ -154,13 +126,13 @@ namespace _3dApplication
                 }
             }
 
-            _verticesCount = vertices.Count();
-            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
+            VertexCount = vertices.Count();
+            VertexBuffer = _device.CreateVertexBuffer(Stride * VertexCount, vertices);
         }
         private void LoadIndexs()
         {
             int indexLength = (_width - 1) * (_height - 1) * 6;
-            _primitiveCount = indexLength / 3;
+            PrimitiveCount = indexLength / 3;
             var indexs = new int[indexLength];
 
             int index = 0;
@@ -178,7 +150,7 @@ namespace _3dApplication
                 }
             }
 
-            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+            IndexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
         private void LoadVertexDeclaration()
         {
@@ -187,21 +159,7 @@ namespace _3dApplication
             vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
-            _vertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
-        }
-        private void LoadTexture(string terrain)
-        {
-            var data = File.ReadAllBytes(Application.StartupPath + @"\Textures\" + terrain);
-            var texture = _device.CreateBaseTexture(data);
-            _baseTextures.Add(texture);
-        }
-        private void LoadShaders()
-        {
-            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
-            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
-
-            _pixelShader = _device.CreatePixelShader(dataPS, "TexturePixel");
-            _vertexShader = _device.CreateVertexShader(dataVS, "TextureAndTransform");
+            VertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
         }
         private void CalculateCenter()
         {
@@ -223,9 +181,7 @@ namespace _3dApplication
 
         }
         public HeightMap(bool diffuseMap)
-        {
-            _textureIndex = 0;
-            _baseTextures = new List<BaseTexture>();
+        {          
             _diffuseMap = diffuseMap;
 
             LoadProperties();
@@ -245,10 +201,10 @@ namespace _3dApplication
 
             LoadVertexDeclaration();
 
-            LoadShaders();
+            LoadShaders("Skybox.vs", "Skybox.ps", "TextureAndTransform", "TexturePixel");
             CalculateCenter();
         }
-        public void Transform()
+        public override void Transform()
         {
             _world = Matrix.Translation(-1*_center);
 
@@ -261,14 +217,12 @@ namespace _3dApplication
             {
                 _textureIndex = 1;
             }
+
+            LoadShadersValues();
         }
         public int GetWidth()
         {
             return _width;
-        }
-        public void Render()
-        {
-            _device.Render(_stride, _primitiveCount, _startIndex, _minVertexIndex, _baseVertexIndex, _verticesCount, _baseTextures[_textureIndex], _vertexDeclaration, _vertexBuffer, _indexBuffer, _pixelShader, _vertexShader, _world, _primitiveType);
         }
         #endregion
 

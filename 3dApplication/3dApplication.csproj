@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="Implementation\Input.cs" />
     <Compile Include="Implementation\HeightMap.cs" />
+    <Compile Include="Implementation\Mesh.cs" />
     <Compile Include="Implementation\Skybox.cs" />
     <Compile Include="Interface\IDevice.cs" />
     <Compile Include="Interface\IMesh.cs" />

@@ -17,7 +17,6 @@ namespace _3dApplication
         void Show();
         bool Focus();
         void Render(IEnumerable<IMesh> meshes);
-        void Render(int stride, int primitiveCount, int startIndex, int minVertexIndex, int baseVertexIndex, int vertexCount, BaseTexture baseTexture, VertexDeclaration vertexDeclaration, VertexBuffer vertexBuffer, IndexBuffer indexBuffer, PixelShader pixelShader, VertexShader vertexShader, Matrix world, PrimitiveType primitiveType);
         VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct;
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);

@@ -9,47 +9,22 @@ using System.Windows.Forms;
 
 namespace _3dApplication
 {
-    public class Skybox : IMesh
+    public class Skybox : Mesh
     {
         #region Private
 
         #region Attributes
-        private int _stride;
         private float _scale;
-        private int _verticesCount;
-        private int _primitiveCount;
-        private int _startIndex;
-        private int _baseVertexIndex;
-        private int _minVertexIndex;
         private float _widthTextureOffset = (1f / 4f);
         private float _heightTextureOffset = (1f / 3f);
-
-        private Matrix _world;
-        private Vector3 _angle;
-        private Vector3 _position;
         private Vector3 _center;
-
-        private IDevice _device;
-        private VertexDeclaration _vertexDeclaration;
-        private VertexBuffer _vertexBuffer;
-        private IndexBuffer _indexBuffer;
-        private BaseTexture _baseTexture;
-        private PixelShader _pixelShader;
-        private VertexShader _vertexShader;
-        private PrimitiveType _primitiveType;
         #endregion
 
         #region Methods
         private void LoadProperties()
         {
-            _device = DXDevice.Instance();
             _scale = 20;
-            _primitiveType = PrimitiveType.TriangleList;
-            _baseVertexIndex = 0;
-            _minVertexIndex = 0;
-            _startIndex = 0;
-            _stride = Marshal.SizeOf<VertexTexture>();
-            _world = Matrix.Identity;
+            Stride = Marshal.SizeOf<VertexTexture>();
         }
         private void LoadVertices()
         {
@@ -91,8 +66,8 @@ namespace _3dApplication
             vertices[22] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, 2 * _heightTextureOffset) };
             vertices[23] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 0.0f), UV = new Vector2(2 * _widthTextureOffset, 3 * _heightTextureOffset) };
 
-            _verticesCount = vertices.Count();
-            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
+            VertexCount = vertices.Count();
+            VertexBuffer = _device.CreateVertexBuffer(Stride * VertexCount, vertices);
             CalculateCenter(vertices);
         }
         private void LoadIndexs()
@@ -147,8 +122,8 @@ namespace _3dApplication
             indexs.Add(22);
             indexs.Add(23);
 
-            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
-            _primitiveCount = 2 * (int)(Math.Ceiling((double)indexs.Count / 4));
+            IndexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
+            PrimitiveCount = 2 * (int)(Math.Ceiling((double)indexs.Count / 4));
         }
         private void LoadVertexDeclaration()
         {
@@ -157,20 +132,7 @@ namespace _3dApplication
             vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
-            _vertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
-        }
-        private void LoadTexture()
-        {
-            var data = File.ReadAllBytes(Application.StartupPath + @"\Textures\Skybox.jpg");
-            _baseTexture = _device.CreateBaseTexture(data);
-        }
-        private void LoadShaders()
-        {
-            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Skybox.vs");
-            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Skybox.ps");
-
-            _pixelShader = _device.CreatePixelShader(dataPS, "TexturePixel");
-            _vertexShader = _device.CreateVertexShader(dataVS, "TextureAndTransform");
+            VertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
         }
         private void CalculateCenter(VertexTexture[] vertices)
         {
@@ -193,21 +155,18 @@ namespace _3dApplication
             LoadProperties();
             LoadVertices();
             LoadIndexs();
-            LoadTexture();
+            LoadTexture("Skybox.jpg");
             LoadVertexDeclaration();
-            LoadShaders();
+            LoadShaders("Skybox.vs", "Skybox.ps", "TextureAndTransform", "TexturePixel");
         }
-        public void Transform()
+        public override void Transform()
         {
             _world = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * Matrix.Translation(_center);
+            LoadShadersValues();
         }
         public void SetSize(int mapWidth)
         {
             _scale = 10 * mapWidth;
-        }
-        public void Render()
-        {
-            _device.Render(_stride, _primitiveCount, _startIndex, _minVertexIndex, _baseVertexIndex, _verticesCount, _baseTexture, _vertexDeclaration, _vertexBuffer, _indexBuffer, _pixelShader, _vertexShader, _world, _primitiveType);
         }
         #endregion
 

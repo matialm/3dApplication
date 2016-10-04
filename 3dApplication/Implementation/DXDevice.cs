@@ -74,33 +74,35 @@ namespace _3dApplication
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
             _device.BeginScene();
 
-            foreach (IMesh mesh in meshes)
-            {
-                mesh.Render();
-            }
-
-            _device.EndScene();
-            _device.Present();
-        }
-        public void Render(int stride, int primitiveCount, int startIndex, int minVertexIndex, int baseVertexIndex, int vertexCount, BaseTexture baseTexture, VertexDeclaration vertexDeclaration, VertexBuffer vertexBuffer, IndexBuffer indexBuffer, PixelShader pixelShader, VertexShader vertexShader, Matrix world, PrimitiveType primitiveType)
-        {
             _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
             _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
             _device.SetRenderState(RenderState.Lighting, false);
 
-            _device.SetTexture(0, baseTexture);
-            _device.SetStreamSource(0, vertexBuffer, 0, stride);
-            _device.VertexDeclaration = vertexDeclaration;
-            _device.Indices = indexBuffer;
+            foreach (IMesh mesh in meshes)
+            {
+                _device.SetTexture(0, mesh.BaseTexture);
+                _device.SetStreamSource(0, mesh.VertexBuffer, 0, mesh.Stride);
+                _device.VertexDeclaration = mesh.VertexDeclaration;
+                _device.Indices = mesh.IndexBuffer;
 
-            _device.PixelShader = pixelShader;
-            _device.VertexShader = vertexShader;
+                _device.PixelShader = mesh.PixelShader;
+                _device.VertexShader = mesh.VertexShader;
 
-            _device.VertexShader.Function.ConstantTable.SetValue(_device, "View", _camera.View);
-            _device.VertexShader.Function.ConstantTable.SetValue(_device, "Projection", _camera.Projection);
-            _device.VertexShader.Function.ConstantTable.SetValue(_device, "World", world);
+                foreach (KeyValuePair<string, Matrix> item in mesh.VertexShaderValues)
+                {
+                    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                }
 
-            _device.DrawIndexedPrimitive(primitiveType, baseVertexIndex, minVertexIndex, vertexCount, startIndex, primitiveCount);
+                foreach (KeyValuePair<string, Matrix> item in mesh.PixelShaderValues)
+                {
+                    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                }
+
+                _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.VertexCount, mesh.StartIndex, mesh.PrimitiveCount);
+            }
+
+            _device.EndScene();
+            _device.Present();
         }
         public static DXDevice Instance()
         {
