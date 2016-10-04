@@ -14,23 +14,22 @@ namespace _3dApplication
         [STAThread]
         static void Main()
         {
-            Camera camera = new Camera();
-            IDevice screen = new DXDevice(camera);
+            Camera camera = Camera.Instance();
+            IDevice screen = DXDevice.Instance();
             screen.Show();
             screen.Focus();
-            Input input = new Input(screen.Handle);
-            screen.Input = input;
+            Input input = Input.Instance();
 
             IList<IMesh> meshes = new List<IMesh>();
 
-            var heightMap = new HeightMap(screen) { Input = input };
-            var skybox = new Skybox(screen);
+            var heightMap = new HeightMap();
+            var skybox = new Skybox();
             skybox.SetSize(heightMap.GetWidth());
 
             meshes.Add(skybox);
             meshes.Add(heightMap);
-            meshes.Add(new Cube(screen));
-            //meshes.Add(new Cube(screen, new int[] { 3, 2, 0 }));
+            meshes.Add(new Cube());
+            //meshes.Add(new Cube(new int[] { 3, 2, 0 }));
 
             while (screen.IsAlive)
             {
@@ -46,14 +45,20 @@ namespace _3dApplication
 
                         if (elapsedtime > _fps)
                         {
-                            camera.Update(input);
+                            camera.Update();
                             foreach (IMesh mesh in meshes)
                             {
                                 mesh.Transform();
                             }
                             _lastTick = currTick;
                         }
-                        screen.Render(camera, meshes);
+
+                        screen.BeginRender();
+                        foreach (IMesh mesh in meshes)
+                        {
+                            mesh.Render();
+                        }
+                        screen.EndRender();
                     }
                     else
                         Thread.Sleep(100);

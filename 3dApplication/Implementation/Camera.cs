@@ -9,6 +9,10 @@ namespace _3dApplication
         #region Private
 
         #region Attributes
+        private static Camera _instance = null;
+
+        private Vector3 _position;
+        private Vector3 _angle;
         private Vector3 _eye;
         private Vector3 _target;
         private Vector3 _up;
@@ -16,9 +20,6 @@ namespace _3dApplication
         private float _aspectRatio;
         private float _zNear;
         private float _zFar;
-
-        private Vector3 _position;
-        private Vector3 _angle;
         #endregion
 
         #region Methods
@@ -34,7 +35,16 @@ namespace _3dApplication
         #endregion
 
         #region Methods
-        public Camera()
+        public static Camera Instance()
+        {
+            if(_instance == null)
+            {
+                _instance = new Camera();
+            }
+
+            return _instance;
+        }
+        private Camera()
         {
             _position = new Vector3(0, 0, 0);
             _angle = new Vector3(0, 0, 0);
@@ -51,9 +61,9 @@ namespace _3dApplication
         {
             _aspectRatio = width / height;
         }
-
-        public void Update(Input input)
+        public void Update()
         {
+            var input = Input.Instance();
             if (input.KeyDown(Key.S))
             {
                 _position.Z += 0.5f;
@@ -77,13 +87,11 @@ namespace _3dApplication
             if (input.KeyDown(Key.Up))
             {
                 _position.Y -= 0.5f;
-
             }
 
             if (input.KeyDown(Key.Down))
             {
-                _position.Y += 0.5f;
-                
+                _position.Y += 0.5f;              
             }
 
             if (input.KeyDown(Key.Right))
@@ -109,7 +117,6 @@ namespace _3dApplication
             Projection = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _zNear, _zFar);
             View = Matrix.RotationYawPitchRoll(_angle.Y, _angle.X, 0) * Matrix.Translation(_position) * Matrix.LookAtLH(_eye, _target, _up);
         }
-
         #endregion
 
         #endregion

@@ -21,30 +21,53 @@ namespace _3dApplication
         private float _heightFactor = 20.0f;
         private float _min = float.MaxValue;
         private int _textureIndex;
-        private Vector3 _center;
         private bool _diffuseMap;
+
+        private int _stride;
+        private float _scale;
+        private int _verticesCount;
+        private int _primitiveCount;
+        private int _startIndex;
+        private int _baseVertexIndex;
+        private int _minVertexIndex;
+
+        private Matrix _world;
+        private Vector3 _angle;
+        private Vector3 _position;
+        private Vector3 _center;
+
+        private IDevice _device;
+        private Input _input;
+        private VertexDeclaration _vertexDeclaration;
+        private VertexBuffer _vertexBuffer;
+        private IndexBuffer _indexBuffer;
         private IList<BaseTexture> _baseTextures;
+        private PixelShader _pixelShader;
+        private VertexShader _vertexShader;
+        private PrimitiveType _primitiveType;
         #endregion
 
         #region Methods
         private void LoadProperties()
         {
-            PrimitiveType = PrimitiveType.TriangleList;
-            BaseVertexIndex = 0;
-            MinVertexIndex = 0;
-            StartIndex = 0;
-            Stride = Marshal.SizeOf<VertexTexture>();
-            Transformation = Matrix.Identity;
+            _device = DXDevice.Instance();
+            _input = Input.Instance();
+            _primitiveType = PrimitiveType.TriangleList;
+            _baseVertexIndex = 0;
+            _minVertexIndex = 0;
+            _startIndex = 0;
+            _stride = Marshal.SizeOf<VertexTexture>();
+            _world = Matrix.Identity;
         }
-        private void LoadHeightMap(IDevice device)
+        private void LoadHeightMap()
         {
-            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
-            Bitmap bitmap = new Bitmap(image);
+            var image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
+            var bitmap = new Bitmap(image);
 
             _height = image.Height;
             _width = image.Width;
 
-            float[,] heightmap = new float[_height, _width];
+            var heightmap = new float[_height, _width];
             for (int z = 0; z < _height; z++)
             {
                 for (int x = 0; x < _width; x++)
@@ -64,8 +87,8 @@ namespace _3dApplication
             int index = 0;
             int indexBufferLength = (_width - 1) * (_height - 1) * 6;
 
-            VertexTexture[] vertices = new VertexTexture[(_height - 1) * (_width - 1) * 4];
-            IList<int> indexs = new List<int>();
+            var vertices = new VertexTexture[(_height - 1) * (_width - 1) * 4];
+            var indexs = new List<int>();
 
             for (int z = 0; z < (_height - 1); z++)
             {
@@ -88,23 +111,22 @@ namespace _3dApplication
                 }
             }
 
-            PrimitiveCount = indexBufferLength / 3;
-            NumVertices = vertices.Count();
+            _primitiveCount = indexBufferLength / 3;
+            _verticesCount = vertices.Count();
 
-            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
-            IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
+            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
-        private void LoadVertices(IDevice device)
+        private void LoadVertices()
         {
-            Image image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
-            Bitmap bitmap = new Bitmap(image);
+            var image = Image.FromFile(Application.StartupPath + @"\HeightMaps\Map01.bmp");
+            var bitmap = new Bitmap(image);
 
             _height = image.Height;
             _width = image.Width;
 
 
-            float[,] heightmap = new float[_height, _width];
-
+            var heightmap = new float[_height, _width];
             for (int z = 0; z < _height; z++)
             {
                 for (int x = 0; x < _width; x++)
@@ -122,7 +144,7 @@ namespace _3dApplication
             bitmap.Dispose();
 
             int index = 0;
-            VertexTexture[] vertices = new VertexTexture[_height * _width];
+            var vertices = new VertexTexture[_height * _width];
             for (int z = 0; z < _height; z++)
             {
                 for (int x = 0; x < _width; x++)
@@ -132,14 +154,14 @@ namespace _3dApplication
                 }
             }
 
-            NumVertices = vertices.Count();
-            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
+            _verticesCount = vertices.Count();
+            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
         }
-        private void LoadIndexs(IDevice device)
+        private void LoadIndexs()
         {
             int indexLength = (_width - 1) * (_height - 1) * 6;
-            PrimitiveCount = indexLength / 3;
-            int[] indexs = new int[indexLength];
+            _primitiveCount = indexLength / 3;
+            var indexs = new int[indexLength];
 
             int index = 0;
             for (int z = 0; z < (_height - 1); z++)
@@ -156,30 +178,30 @@ namespace _3dApplication
                 }
             }
 
-            IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
+            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count(), indexs.ToArray());
         }
-        private void LoadVertexDeclaration(IDevice device)
+        private void LoadVertexDeclaration()
         {
-            IList<VertexElement> vertexElements = new List<VertexElement>();
+            var vertexElements = new List<VertexElement>();
             vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0));
             vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
-            VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
+            _vertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
         }
-        private void LoadTexture(IDevice device, string terrain)
+        private void LoadTexture(string terrain)
         {
-            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\" + terrain);
-            BaseTexture texture = device.CreateBaseTexture(data);
+            var data = File.ReadAllBytes(Application.StartupPath + @"\Textures\" + terrain);
+            var texture = _device.CreateBaseTexture(data);
             _baseTextures.Add(texture);
         }
-        private void LoadShaders(IDevice device)
+        private void LoadShaders()
         {
-            byte[] dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
-            byte[] dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
+            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
+            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
 
-            PixelShader = device.CreatePixelShader(dataPS, "TexturePixel");
-            VertexShader = device.CreateVertexShader(dataVS, "TextureAndTransform");
+            _pixelShader = _device.CreatePixelShader(dataPS, "TexturePixel");
+            _vertexShader = _device.CreateVertexShader(dataVS, "TextureAndTransform");
         }
         private void CalculateCenter()
         {
@@ -192,29 +214,15 @@ namespace _3dApplication
         #region Public
 
         #region Attributes
-        public VertexDeclaration VertexDeclaration { get; set; }
-        public PrimitiveType PrimitiveType { get; set; }
-        public VertexBuffer VertexBuffer { get; set; }
-        public VertexShader VertexShader { get; set; }
-        public PixelShader PixelShader { get; set; }
-        public IndexBuffer IndexBuffer { get; set; }
-        public BaseTexture BaseTexture { get { return _baseTextures[_textureIndex]; } }
-        public Matrix Transformation { get; set; }
-        public int BaseVertexIndex { get; set; }
-        public int MinVertexIndex { get; set; }
-        public int NumVertices { get; set; }
-        public int StartIndex { get; set; }
-        public int PrimitiveCount { get; set; }
-        public int Stride { get; set; }
-        public Input Input { get; set; }
+
         #endregion
 
         #region Methods
-        public HeightMap(IDevice device) : this(device, false)
+        public HeightMap() : this(false)
         {
 
         }
-        public HeightMap(IDevice device, bool diffuseMap)
+        public HeightMap(bool diffuseMap)
         {
             _textureIndex = 0;
             _baseTextures = new List<BaseTexture>();
@@ -224,42 +232,44 @@ namespace _3dApplication
 
             if(_diffuseMap)
             {
-                LoadVertices(device);
-                LoadIndexs(device);
-                LoadTexture(device, "DiffuseMap01.jpg");
+                LoadVertices();
+                LoadIndexs();
+                LoadTexture("DiffuseMap01.jpg");
             }
             else
             {
-                LoadHeightMap(device);
-                LoadTexture(device, "TerrainTest.jpg");
-                LoadTexture(device, "Terrain01.jpg");
+                LoadHeightMap();
+                LoadTexture("TerrainTest.jpg");
+                LoadTexture("Terrain01.jpg");
             }
 
-            LoadVertexDeclaration(device);
+            LoadVertexDeclaration();
 
-            LoadShaders(device);
+            LoadShaders();
             CalculateCenter();
         }
         public void Transform()
         {
-            Transformation = Matrix.Translation(-1*_center);
+            _world = Matrix.Translation(-1*_center);
 
-            if(Input.KeyDown(Key.D1))
+            if(!_diffuseMap && _input.KeyDown(Key.D1))
             {
                 _textureIndex = 0;
             }
 
-            if (Input.KeyDown(Key.D2))
+            if (!_diffuseMap && _input.KeyDown(Key.D2))
             {
                 _textureIndex = 1;
             }
         }
-
         public int GetWidth()
         {
             return _width;
         }
-
+        public void Render()
+        {
+            _device.Render(_stride, _primitiveCount, _startIndex, _minVertexIndex, _baseVertexIndex, _verticesCount, _baseTextures[_textureIndex], _vertexDeclaration, _vertexBuffer, _indexBuffer, _pixelShader, _vertexShader, _world, _primitiveType);
+        }
         #endregion
 
         #endregion

@@ -14,26 +14,46 @@ namespace _3dApplication
         #region Private
 
         #region Attributes
-        private Vector3 _center;
+        private int _stride;
         private float _scale;
+        private int _verticesCount;
+        private int _primitiveCount;
+        private int _startIndex;
+        private int _baseVertexIndex;
+        private int _minVertexIndex;
         private float _widthTextureOffset = (1f / 4f);
         private float _heightTextureOffset = (1f / 3f);
+
+        private Matrix _world;
+        private Vector3 _angle;
+        private Vector3 _position;
+        private Vector3 _center;
+
+        private IDevice _device;
+        private VertexDeclaration _vertexDeclaration;
+        private VertexBuffer _vertexBuffer;
+        private IndexBuffer _indexBuffer;
+        private BaseTexture _baseTexture;
+        private PixelShader _pixelShader;
+        private VertexShader _vertexShader;
+        private PrimitiveType _primitiveType;
         #endregion
 
         #region Methods
         private void LoadProperties()
         {
+            _device = DXDevice.Instance();
             _scale = 20;
-            PrimitiveType = PrimitiveType.TriangleList;
-            BaseVertexIndex = 0;
-            MinVertexIndex = 0;
-            StartIndex = 0;
-            Stride = Marshal.SizeOf<VertexTexture>();
-            Transformation = Matrix.Identity;
+            _primitiveType = PrimitiveType.TriangleList;
+            _baseVertexIndex = 0;
+            _minVertexIndex = 0;
+            _startIndex = 0;
+            _stride = Marshal.SizeOf<VertexTexture>();
+            _world = Matrix.Identity;
         }
-        private void LoadVertices(IDevice device)
+        private void LoadVertices()
         {
-            VertexTexture[] vertices = new VertexTexture[24];
+            var vertices = new VertexTexture[24];
 
             //frente
             vertices[0] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 1.0f), UV = new Vector2(_widthTextureOffset, 2 * _heightTextureOffset) };
@@ -71,13 +91,13 @@ namespace _3dApplication
             vertices[22] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, 2 * _heightTextureOffset) };
             vertices[23] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 0.0f), UV = new Vector2(2 * _widthTextureOffset, 3 * _heightTextureOffset) };
 
-            NumVertices = vertices.Count();
-            VertexBuffer = device.CreateVertexBuffer(Stride * NumVertices, vertices);
+            _verticesCount = vertices.Count();
+            _vertexBuffer = _device.CreateVertexBuffer(_stride * _verticesCount, vertices);
             CalculateCenter(vertices);
         }
-        private void LoadIndexs(IDevice device)
+        private void LoadIndexs()
         {
-            IList<int> indexs = new List<int>();
+            var indexs = new List<int>();
 
             //frente
             indexs.Add(0);
@@ -127,34 +147,34 @@ namespace _3dApplication
             indexs.Add(22);
             indexs.Add(23);
 
-            IndexBuffer = device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
-            PrimitiveCount = 2 * (int)(Math.Ceiling((double)indexs.Count / 4));
+            _indexBuffer = _device.CreateIndexBuffer(sizeof(int) * indexs.Count, indexs.ToArray());
+            _primitiveCount = 2 * (int)(Math.Ceiling((double)indexs.Count / 4));
         }
-        private void LoadVertexDeclaration(IDevice device)
+        private void LoadVertexDeclaration()
         {
-            IList<VertexElement> vertexElements = new List<VertexElement>();
+            var vertexElements = new List<VertexElement>();
             vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0));
             vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
-            VertexDeclaration = device.CreateVertexDeclaration(vertexElements.ToArray());
+            _vertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
         }
-        private void LoadTexture(IDevice device)
+        private void LoadTexture()
         {
-            byte[] data = File.ReadAllBytes(Application.StartupPath + @"\Textures\Skybox.jpg");
-            BaseTexture = device.CreateBaseTexture(data);
+            var data = File.ReadAllBytes(Application.StartupPath + @"\Textures\Skybox.jpg");
+            _baseTexture = _device.CreateBaseTexture(data);
         }
-        private void LoadShaders(IDevice device)
+        private void LoadShaders()
         {
-            byte[] dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
-            byte[] dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
+            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
+            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
 
-            PixelShader = device.CreatePixelShader(dataPS, "TexturePixel");
-            VertexShader = device.CreateVertexShader(dataVS, "TextureAndTransform");
+            _pixelShader = _device.CreatePixelShader(dataPS, "TexturePixel");
+            _vertexShader = _device.CreateVertexShader(dataVS, "TextureAndTransform");
         }
         private void CalculateCenter(VertexTexture[] vertices)
         {
-            Vector3 vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
+            var vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
             _center = new Vector3(vertex.X / 2, vertex.Y / 2, vertex.Z / 2);
         }
         #endregion
@@ -164,42 +184,31 @@ namespace _3dApplication
         #region Public
 
         #region Attributes
-        public VertexDeclaration VertexDeclaration { get; set; }
-        public PrimitiveType PrimitiveType { get; set; }
-        public VertexBuffer VertexBuffer { get; set; }
-        public VertexShader VertexShader { get; set; }
-        public PixelShader PixelShader { get; set; }
-        public IndexBuffer IndexBuffer { get; set; }
-        public BaseTexture BaseTexture { get; set; }
-        public Matrix Transformation { get; set; }
-        public int BaseVertexIndex { get; set; }
-        public int MinVertexIndex { get; set; }
-        public int NumVertices { get; set; }
-        public int StartIndex { get; set; }
-        public int PrimitiveCount { get; set; }
-        public int Stride { get; set; }
+
         #endregion
 
         #region Methods
-        public Skybox(IDevice device)
+        public Skybox()
         {
             LoadProperties();
-            LoadVertices(device);
-            LoadIndexs(device);
-            LoadTexture(device);
-            LoadVertexDeclaration(device);
-            LoadShaders(device);
+            LoadVertices();
+            LoadIndexs();
+            LoadTexture();
+            LoadVertexDeclaration();
+            LoadShaders();
         }
         public void Transform()
         {
-            Transformation = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * Matrix.Translation(_center);
+            _world = Matrix.Translation(-1 * _center) * Matrix.Scaling(_scale) * Matrix.Translation(_center);
         }
-
         public void SetSize(int mapWidth)
         {
             _scale = 10 * mapWidth;
         }
-
+        public void Render()
+        {
+            _device.Render(_stride, _primitiveCount, _startIndex, _minVertexIndex, _baseVertexIndex, _verticesCount, _baseTexture, _vertexDeclaration, _vertexBuffer, _indexBuffer, _pixelShader, _vertexShader, _world, _primitiveType);
+        }
         #endregion
 
         #endregion

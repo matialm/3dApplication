@@ -1,4 +1,5 @@
-﻿using SharpDX.Direct3D9;
+﻿using SharpDX;
+using SharpDX.Direct3D9;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace _3dApplication
         #region Private
 
         #region Attributes
+        private static DXDevice _instance = null;
         private Device _device;
         private Camera _camera;
         private bool _wireframe = false;
@@ -45,13 +47,12 @@ namespace _3dApplication
                 return _device.TestCooperativeLevel().Success;
             }
         }
-
-        public Input Input { get; set; }
         #endregion
 
         #region Methods
-        public DXDevice(Camera camera)
+        private DXDevice()
         {
+            _camera = Camera.Instance();
             IsAlive = true;
             Size = new Size(800, 600);
             Text = "DirectX";
@@ -59,43 +60,52 @@ namespace _3dApplication
             FormClosed += DXDevice_FormClosed;
             //FormBorderStyle = FormBorderStyle.None;
 
-            var parameters = new PresentParameters(this.ClientSize.Width, this.ClientSize.Height);
+            var parameters = new PresentParameters(ClientSize.Width, ClientSize.Height);
             parameters.SwapEffect = SwapEffect.Discard;
             parameters.Windowed = true;
             parameters.PresentationInterval = PresentInterval.Immediate;
             parameters.BackBufferCount = 1;
 
-            _camera = camera;
-            _device = new Device(new Direct3D(), 0, DeviceType.Hardware, this.Handle, CreateFlags.HardwareVertexProcessing, parameters);
+            _device = new Device(new Direct3D(), 0, DeviceType.Hardware, Handle, CreateFlags.HardwareVertexProcessing, parameters);
             _camera.SetSize(Size.Width, Size.Height);
         }
-        public void Render(Camera camera, IEnumerable<IMesh> meshes)
+        public void BeginRender()
         {
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
             _device.BeginScene();
-
+        }
+        public void EndRender()
+        {
+            _device.EndScene();
+            _device.Present();
+        }
+        public void Render(int stride, int primitiveCount, int startIndex, int minVertexIndex, int baseVertexIndex, int vertexCount, BaseTexture baseTexture, VertexDeclaration vertexDeclaration, VertexBuffer vertexBuffer, IndexBuffer indexBuffer, PixelShader pixelShader, VertexShader vertexShader, Matrix world, PrimitiveType primitiveType)
+        {
             _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
             _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
             _device.SetRenderState(RenderState.Lighting, false);
 
-            foreach (IMesh mesh in meshes)
+            _device.SetTexture(0, baseTexture);
+            _device.SetStreamSource(0, vertexBuffer, 0, stride);
+            _device.VertexDeclaration = vertexDeclaration;
+            _device.Indices = indexBuffer;
+
+            _device.PixelShader = pixelShader;
+            _device.VertexShader = vertexShader;
+
+            _device.VertexShader.Function.ConstantTable.SetValue(_device, "viewProjection", _camera.View * _camera.Projection);
+            _device.VertexShader.Function.ConstantTable.SetValue(_device, "transformation", world);
+
+            _device.DrawIndexedPrimitive(primitiveType, baseVertexIndex, minVertexIndex, vertexCount, startIndex, primitiveCount);
+        }
+        public static DXDevice Instance()
+        {
+            if(_instance == null)
             {
-                _device.SetTexture(0, mesh.BaseTexture);
-                _device.SetStreamSource(0, mesh.VertexBuffer, 0, mesh.Stride);
-                _device.VertexDeclaration = mesh.VertexDeclaration;
-                _device.Indices = mesh.IndexBuffer;
-               
-                _device.PixelShader = mesh.PixelShader;
-                _device.VertexShader = mesh.VertexShader;
-
-                _device.VertexShader.Function.ConstantTable.SetValue(_device, "viewProjection", camera.View * camera.Projection);
-                _device.VertexShader.Function.ConstantTable.SetValue(_device, "transformation", mesh.Transformation);
-
-                _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.NumVertices, mesh.StartIndex, mesh.PrimitiveCount);
+                _instance = new DXDevice();
             }
 
-            _device.EndScene();
-            _device.Present();
+            return _instance;
         }
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
@@ -140,12 +150,14 @@ namespace _3dApplication
         }
         public void CaptureInput()
         {
-            if(Input.KeyPress(Key.Escape))
+            var input = Input.Instance();
+
+            if (input.KeyPress(Key.Escape))
             {
                 IsAlive = false;
             }
 
-            if(Input.KeyPress(Key.F1))
+            if(input.KeyPress(Key.F1))
             {
                 _wireframe = !_wireframe;
             }

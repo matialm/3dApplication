@@ -1,4 +1,5 @@
-﻿using SharpDX.Direct3D9;
+﻿using SharpDX;
+using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,11 +13,12 @@ namespace _3dApplication
         bool Accesible { get; }
         Size Size { get; set; }
         IntPtr Handle { get; }
-        Input Input { get; set; }
 
         void Show();
         bool Focus();
-        void Render(Camera camera, IEnumerable<IMesh> meshes);
+        void BeginRender();
+        void EndRender();
+        void Render(int stride, int primitiveCount, int startIndex, int minVertexIndex, int baseVertexIndex, int vertexCount, BaseTexture baseTexture, VertexDeclaration vertexDeclaration, VertexBuffer vertexBuffer, IndexBuffer indexBuffer, PixelShader pixelShader, VertexShader vertexShader, Matrix world, PrimitiveType primitiveType);
         VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct;
         VertexDeclaration CreateVertexDeclaration(VertexElement[] vertexElements);
         IndexBuffer CreateIndexBuffer(int sizeInBytes, int[] indexs);
