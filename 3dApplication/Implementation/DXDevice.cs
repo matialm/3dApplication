@@ -93,8 +93,9 @@ namespace _3dApplication
             _device.PixelShader = pixelShader;
             _device.VertexShader = vertexShader;
 
-            _device.VertexShader.Function.ConstantTable.SetValue(_device, "viewProjection", _camera.View * _camera.Projection);
-            _device.VertexShader.Function.ConstantTable.SetValue(_device, "transformation", world);
+            _device.VertexShader.Function.ConstantTable.SetValue(_device, "View", _camera.View);
+            _device.VertexShader.Function.ConstantTable.SetValue(_device, "Projection", _camera.Projection);
+            _device.VertexShader.Function.ConstantTable.SetValue(_device, "World", world);
 
             _device.DrawIndexedPrimitive(primitiveType, baseVertexIndex, minVertexIndex, vertexCount, startIndex, primitiveCount);
         }
