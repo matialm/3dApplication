@@ -166,8 +166,8 @@ namespace _3dApplication
         }
         private void LoadShaders()
         {
-            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Texture.vs");
-            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Texture.ps");
+            var dataVS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Vertex\Skybox.vs");
+            var dataPS = File.ReadAllBytes(Application.StartupPath + @"\Shaders\Pixel\Skybox.ps");
 
             _pixelShader = _device.CreatePixelShader(dataPS, "TexturePixel");
             _vertexShader = _device.CreateVertexShader(dataVS, "TextureAndTransform");

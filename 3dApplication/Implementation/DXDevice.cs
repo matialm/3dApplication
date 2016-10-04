@@ -69,13 +69,16 @@ namespace _3dApplication
             _device = new Device(new Direct3D(), 0, DeviceType.Hardware, Handle, CreateFlags.HardwareVertexProcessing, parameters);
             _camera.SetSize(Size.Width, Size.Height);
         }
-        public void BeginRender()
+        public void Render(IEnumerable<IMesh> meshes)
         {
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
             _device.BeginScene();
-        }
-        public void EndRender()
-        {
+
+            foreach (IMesh mesh in meshes)
+            {
+                mesh.Render();
+            }
+
             _device.EndScene();
             _device.Present();
         }

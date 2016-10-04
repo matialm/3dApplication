@@ -53,12 +53,7 @@ namespace _3dApplication
                             _lastTick = currTick;
                         }
 
-                        screen.BeginRender();
-                        foreach (IMesh mesh in meshes)
-                        {
-                            mesh.Render();
-                        }
-                        screen.EndRender();
+                        screen.Render(meshes);
                     }
                     else
                         Thread.Sleep(100);
