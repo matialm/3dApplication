@@ -201,7 +201,7 @@ namespace _3dApplication
 
             LoadVertexDeclaration();
 
-            LoadShaders("Skybox.vs", "Skybox.ps", "TextureAndTransform", "TexturePixel");
+            LoadShaders("Texture.vs", "Texture.ps", "TextureAndTransform", "TexturePixel");
             CalculateCenter();
         }
         public override void Transform()
