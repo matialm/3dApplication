@@ -23,6 +23,7 @@ namespace _3dApplication
         VertexShader CreateVertexShader(byte[] data, string entryPoint);
         PixelShader CreatePixelShader(byte[] data, string entryPoitn);
         BaseTexture CreateBaseTexture(byte[] data);
+        BaseTexture CreateBaseTextureFromCubeTexture(byte[] data);
         void CaptureInput();
         void Dispose();
     }

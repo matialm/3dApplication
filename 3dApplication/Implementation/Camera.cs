@@ -32,6 +32,18 @@ namespace _3dApplication
         #region Attributes
         public Matrix Projection { get; set; }
         public Matrix View { get; set; }
+        public Vector3 Position
+        {
+            get
+            {
+                return _position;
+            }
+
+            set
+            {
+                _position = value;
+            }
+        }
         #endregion
 
         #region Methods
@@ -120,6 +132,5 @@ namespace _3dApplication
         #endregion
 
         #endregion
-
     }
 }

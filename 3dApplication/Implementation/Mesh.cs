@@ -28,6 +28,12 @@ namespace _3dApplication
             var baseTexture = _device.CreateBaseTexture(data);
             _baseTextures.Add(baseTexture);
         }
+        protected void LoadCubeTexture(string fileName)
+        {
+            var data = File.ReadAllBytes(Application.StartupPath + $@"\Textures\{fileName}");
+            var baseTexture = _device.CreateBaseTextureFromCubeTexture(data);
+            _baseTextures.Add(baseTexture);
+        }
         protected void LoadShaders(string vertexShaderFile, string pixelShaderFile, string vertexShaderFunction, string pixelShaderFunction)
         {
             var dataVS = File.ReadAllBytes(Application.StartupPath + $@"\Shaders\Vertex\{vertexShaderFile}");
@@ -44,6 +50,14 @@ namespace _3dApplication
             VertexShaderValues.Add("Projection", camera.Projection);
             VertexShaderValues.Add("World", _world);
         }
+
+        //protected void LoadShadersValues()
+        //{
+        //    var camera = Camera.Instance();
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "View", camera.View);
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "Projection", camera.Projection);
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "World", _world);
+        //}
         #endregion
 
         #endregion

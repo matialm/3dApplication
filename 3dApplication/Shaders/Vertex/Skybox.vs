@@ -1,22 +1,22 @@
-struct VertexToPixel
+struct Vertex
 {
-	float4 Position     : POSITION;
-	float2 TexCoords    : TEXCOORD0;
+	float4 Position : POSITION;
+	float3 TexCoords : TEXCOORD0;
 };
 
 float4x4 View;
 float4x4 Projection;
 float4x4 World;
 
-VertexToPixel TextureAndTransform(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
+Vertex TextureAndTransform(Vertex input)
 {
-	float4x4 viewProjection = mul(View, Projection);
+	Vertex output = (Vertex)0;
 
-	VertexToPixel Output = (VertexToPixel)0;
+	float4 worldPosition = mul(input.Position, World);
+	float4 viewPosition = mul(worldPosition, View);
 
-	Output.Position = mul(mul(inPos, World), viewProjection);
+	output.Position = mul(viewPosition, Projection);
+	output.TexCoords = worldPosition;
 
-	Output.TexCoords = inTexCoords;
-
-	return Output;
+	return output;
 }

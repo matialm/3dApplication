@@ -1,6 +1,7 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace _3dApplication
         #region Attributes
         private float _scale;
         private float _widthTextureOffset = (1f / 4f);
-        private float _heightTextureOffset = (1f / 3f);
+        private float _heightTextureOffset = (1f / 4f);
         private Vector3 _center;
         #endregion
 
@@ -24,47 +25,47 @@ namespace _3dApplication
         private void LoadProperties()
         {
             _scale = 20;
-            Stride = Marshal.SizeOf<VertexTexture>();
+            Stride = Marshal.SizeOf<Vertex>();
         }
         private void LoadVertices()
         {
-            var vertices = new VertexTexture[24];
+            var vertices = new Vertex[24];
 
             //frente
-            vertices[0] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 1.0f), UV = new Vector2(_widthTextureOffset, 2 * _heightTextureOffset) };
-            vertices[1] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 1.0f), UV = new Vector2(_widthTextureOffset, _heightTextureOffset) };
-            vertices[2] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, _heightTextureOffset) };
-            vertices[3] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, 2 * _heightTextureOffset) };
+            vertices[0] = new Vertex { Position = new Vector3(0.0f, 0.0f, 1.0f) };
+            vertices[1] = new Vertex { Position = new Vector3(0.0f, 1.0f, 1.0f) };
+            vertices[2] = new Vertex { Position = new Vector3(1.0f, 1.0f, 1.0f) };
+            vertices[3] = new Vertex { Position = new Vector3(1.0f, 0.0f, 1.0f) };
 
             //contra frente
-            vertices[4] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 0.0f), UV = new Vector2(3 * _widthTextureOffset, 2 * _heightTextureOffset) };
-            vertices[5] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 0.0f), UV = new Vector2(3 * _widthTextureOffset, _heightTextureOffset) };
-            vertices[6] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 0.0f), UV = new Vector2(4 * _widthTextureOffset, _heightTextureOffset) };
-            vertices[7] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 0.0f), UV = new Vector2(4 * _widthTextureOffset, 2 * _heightTextureOffset) };
+            vertices[4] = new Vertex { Position = new Vector3(1.0f, 0.0f, 0.0f) };
+            vertices[5] = new Vertex { Position = new Vector3(1.0f, 1.0f, 0.0f) };
+            vertices[6] = new Vertex { Position = new Vector3(0.0f, 1.0f, 0.0f) };
+            vertices[7] = new Vertex { Position = new Vector3(0.0f, 0.0f, 0.0f) };
 
             //lateral izquierdo
-            vertices[8] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 0.0f), UV = new Vector2(0, 2 * _heightTextureOffset) };
-            vertices[9] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 0.0f), UV = new Vector2(0, _heightTextureOffset) };
-            vertices[10] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 1.0f), UV = new Vector2(_widthTextureOffset, _heightTextureOffset) };
-            vertices[11] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 1.0f), UV = new Vector2(_widthTextureOffset, 2 * _heightTextureOffset) };
+            vertices[8] = new Vertex { Position = new Vector3(0.0f, 0.0f, 0.0f) };
+            vertices[9] = new Vertex { Position = new Vector3(0.0f, 1.0f, 0.0f) };
+            vertices[10] = new Vertex { Position = new Vector3(0.0f, 1.0f, 1.0f) };
+            vertices[11] = new Vertex { Position = new Vector3(0.0f, 0.0f, 1.0f) };
 
             //lateral derecho
-            vertices[12] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, 2 * _heightTextureOffset) };
-            vertices[13] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, _heightTextureOffset) };
-            vertices[14] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 0.0f), UV = new Vector2(3 * _widthTextureOffset, _heightTextureOffset) };
-            vertices[15] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 0.0f), UV = new Vector2(3 * _widthTextureOffset, 2 * _heightTextureOffset) };
+            vertices[12] = new Vertex { Position = new Vector3(1.0f, 0.0f, 1.0f) };
+            vertices[13] = new Vertex { Position = new Vector3(1.0f, 1.0f, 1.0f) };
+            vertices[14] = new Vertex { Position = new Vector3(1.0f, 1.0f, 0.0f) };
+            vertices[15] = new Vertex { Position = new Vector3(1.0f, 0.0f, 0.0f) };
 
             //techo
-            vertices[16] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 1.0f), UV = new Vector2(_widthTextureOffset, _heightTextureOffset) };
-            vertices[17] = new VertexTexture { Position = new Vector3(0.0f, 1.0f, 0.0f), UV = new Vector2(_widthTextureOffset, 0) };
-            vertices[18] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 0.0f), UV = new Vector2(2 * _widthTextureOffset, 0) };
-            vertices[19] = new VertexTexture { Position = new Vector3(1.0f, 1.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, _heightTextureOffset) };
+            vertices[16] = new Vertex { Position = new Vector3(0.0f, 1.0f, 1.0f) };
+            vertices[17] = new Vertex { Position = new Vector3(0.0f, 1.0f, 0.0f) };
+            vertices[18] = new Vertex { Position = new Vector3(1.0f, 1.0f, 0.0f) };
+            vertices[19] = new Vertex { Position = new Vector3(1.0f, 1.0f, 1.0f) };
 
             //piso
-            vertices[20] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 0.0f), UV = new Vector2(_widthTextureOffset, 3 * _heightTextureOffset) };
-            vertices[21] = new VertexTexture { Position = new Vector3(0.0f, 0.0f, 1.0f), UV = new Vector2(_widthTextureOffset, 2 * _heightTextureOffset) };
-            vertices[22] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 1.0f), UV = new Vector2(2 * _widthTextureOffset, 2 * _heightTextureOffset) };
-            vertices[23] = new VertexTexture { Position = new Vector3(1.0f, 0.0f, 0.0f), UV = new Vector2(2 * _widthTextureOffset, 3 * _heightTextureOffset) };
+            vertices[20] = new Vertex { Position = new Vector3(0.0f, 0.0f, 0.0f) };
+            vertices[21] = new Vertex { Position = new Vector3(0.0f, 0.0f, 1.0f) };
+            vertices[22] = new Vertex { Position = new Vector3(1.0f, 0.0f, 1.0f) };
+            vertices[23] = new Vertex { Position = new Vector3(1.0f, 0.0f, 0.0f) };
 
             VertexCount = vertices.Count();
             VertexBuffer = _device.CreateVertexBuffer(Stride * VertexCount, vertices);
@@ -129,15 +130,20 @@ namespace _3dApplication
         {
             var vertexElements = new List<VertexElement>();
             vertexElements.Add(new VertexElement(0, 0, DeclarationType.Float3, DeclarationMethod.Default, DeclarationUsage.Position, 0));
-            vertexElements.Add(new VertexElement(0, (short)Vector3.SizeInBytes, DeclarationType.Float2, DeclarationMethod.Default, DeclarationUsage.TextureCoordinate, 0));
             vertexElements.Add(VertexElement.VertexDeclarationEnd);
 
             VertexDeclaration = _device.CreateVertexDeclaration(vertexElements.ToArray());
         }
-        private void CalculateCenter(VertexTexture[] vertices)
+        private void CalculateCenter(Vertex[] vertices)
         {
             var vertex = vertices.OrderByDescending(x => x.Position.Length()).First().Position;
             _center = new Vector3(vertex.X / 2, vertex.Y / 2, vertex.Z / 2);
+        }
+
+        private new void LoadShadersValues()
+        {
+            base.LoadShadersValues();
+            //VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "CameraPosition", Camera.Instance.Position);
         }
         #endregion
 
@@ -155,7 +161,7 @@ namespace _3dApplication
             LoadProperties();
             LoadVertices();
             LoadIndexs();
-            LoadTexture("Skybox.jpg");
+            LoadCubeTexture("Islands.dds");
             LoadVertexDeclaration();
             LoadShaders("Skybox.vs", "Skybox.ps", "TextureAndTransform", "TexturePixel");
         }

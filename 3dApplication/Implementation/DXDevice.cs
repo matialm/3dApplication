@@ -140,6 +140,12 @@ namespace _3dApplication
             var baseTexture = new BaseTexture(texture.NativePointer);
             return baseTexture;
         }
+        public BaseTexture CreateBaseTextureFromCubeTexture(byte[] data)
+        {
+            var texture = CubeTexture.FromMemory(_device, data);
+            var baseTexture = new CubeTexture(texture.NativePointer);
+            return baseTexture;
+        }
         public PixelShader CreatePixelShader(byte[] data, string entryPoint)
         {
             var result = ShaderBytecode.Compile(data, entryPoint, "ps_2_0", ShaderFlags.None);
