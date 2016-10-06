@@ -28,7 +28,7 @@ namespace _3dApplication
         #region Methods
         private void LoadProperties()
         {
-            _input = Input.Instance();
+            _input = Input.Instance;
             Stride = Marshal.SizeOf<VertexTexture>();
         }
         private void LoadHeightMap()

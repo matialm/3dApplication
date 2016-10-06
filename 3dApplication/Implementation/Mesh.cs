@@ -44,7 +44,7 @@ namespace _3dApplication
         }
         protected void LoadShadersValues()
         {
-            var camera = Camera.Instance();
+            var camera = Camera.Instance;
             VertexShaderValues.Clear();
             VertexShaderValues.Add("View", camera.View);
             VertexShaderValues.Add("Projection", camera.Projection);
@@ -53,7 +53,7 @@ namespace _3dApplication
 
         //protected void LoadShadersValues()
         //{
-        //    var camera = Camera.Instance();
+        //    var camera = Camera.Instance;
         //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "View", camera.View);
         //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "Projection", camera.Projection);
         //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "World", _world);
@@ -92,7 +92,7 @@ namespace _3dApplication
         #region Methods
         public Mesh()
         {
-            _device = DXDevice.Instance();
+            _device = DXDevice.Instance;
             _world = Matrix.Identity;
             _textureIndex = 0;
             _baseTextures = new List<BaseTexture>();

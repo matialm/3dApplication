@@ -23,27 +23,30 @@ namespace _3dApplication
         #region Public
 
         #region Attributes
+        public static Input Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Input();
+                }
+
+                return _instance;
+            }
+        }
         #endregion
 
         #region Methods
-        public static Input Instance()
-        {
-            if(_instance == null)
-            {
-                _instance = new Input();
-            }
-
-            return _instance;
-        }
         private Input()
         {
             DirectInput directInput = new DirectInput();
             _keyboard = new Keyboard(directInput);
-            _keyboard.SetCooperativeLevel(DXDevice.Instance().Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+            _keyboard.SetCooperativeLevel(DXDevice.Instance.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
             _keyboard.Acquire();
 
             _mouse = new Mouse(directInput);
-            _mouse.SetCooperativeLevel(DXDevice.Instance().Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+            _mouse.SetCooperativeLevel(DXDevice.Instance.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
             _mouse.Acquire();
 
             int[] values = (int[])Enum.GetValues(typeof(Key));

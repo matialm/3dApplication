@@ -14,11 +14,11 @@ namespace _3dApplication
         [STAThread]
         static void Main()
         {
-            Camera camera = Camera.Instance();
-            IDevice screen = DXDevice.Instance();
+            Camera camera = Camera.Instance;
+            IDevice screen = DXDevice.Instance;
             screen.Show();
             screen.Focus();
-            Input input = Input.Instance();
+            Input input = Input.Instance;
 
             IList<IMesh> meshes = new List<IMesh>();
 

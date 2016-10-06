@@ -44,18 +44,21 @@ namespace _3dApplication
                 _position = value;
             }
         }
+        public static Camera Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Camera();
+                }
+
+                return _instance;
+            }
+        }
         #endregion
 
         #region Methods
-        public static Camera Instance()
-        {
-            if(_instance == null)
-            {
-                _instance = new Camera();
-            }
-
-            return _instance;
-        }
         private Camera()
         {
             _position = new Vector3(0, 0, 0);
@@ -75,7 +78,7 @@ namespace _3dApplication
         }
         public void Update()
         {
-            var input = Input.Instance();
+            var input = Input.Instance;
             if (input.KeyDown(Key.S))
             {
                 _position.Z += 0.5f;

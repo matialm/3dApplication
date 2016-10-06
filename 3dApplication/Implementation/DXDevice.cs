@@ -47,12 +47,24 @@ namespace _3dApplication
                 return _device.TestCooperativeLevel().Success;
             }
         }
+        public static DXDevice Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new DXDevice();
+                }
+
+                return _instance;
+            }
+        }
         #endregion
 
         #region Methods
         private DXDevice()
         {
-            _camera = Camera.Instance();
+            _camera = Camera.Instance;
             IsAlive = true;
             Size = new Size(800, 600);
             Text = "DirectX";
@@ -104,15 +116,6 @@ namespace _3dApplication
             _device.EndScene();
             _device.Present();
         }
-        public static DXDevice Instance()
-        {
-            if(_instance == null)
-            {
-                _instance = new DXDevice();
-            }
-
-            return _instance;
-        }
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
             var buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
@@ -162,7 +165,7 @@ namespace _3dApplication
         }
         public void CaptureInput()
         {
-            var input = Input.Instance();
+            var input = Input.Instance;
 
             if (input.KeyPress(Key.Escape))
             {
