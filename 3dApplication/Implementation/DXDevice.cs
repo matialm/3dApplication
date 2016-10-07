@@ -100,15 +100,15 @@ namespace _3dApplication
                 _device.PixelShader = mesh.PixelShader;
                 _device.VertexShader = mesh.VertexShader;
 
-                foreach (KeyValuePair<string, Matrix> item in mesh.VertexShaderValues)
-                {
-                    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                }
+                //foreach (KeyValuePair<string, Matrix> item in mesh.VertexShaderValues)
+                //{
+                //    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                //}
 
-                foreach (KeyValuePair<string, Matrix> item in mesh.PixelShaderValues)
-                {
-                    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                }
+                //foreach (KeyValuePair<string, Matrix> item in mesh.PixelShaderValues)
+                //{
+                //    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                //}
 
                 _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.VertexCount, mesh.StartIndex, mesh.PrimitiveCount);
             }

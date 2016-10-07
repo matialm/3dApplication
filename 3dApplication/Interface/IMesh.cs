@@ -21,6 +21,7 @@ namespace _3dApplication
         PrimitiveType PrimitiveType { get; set; }
         Dictionary<string, Matrix> VertexShaderValues { get; set; }
         Dictionary<string, Matrix> PixelShaderValues { get; set; }
+        Matrix World { get; }
 
         void Transform();
     }
