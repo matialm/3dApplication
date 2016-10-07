@@ -1,5 +1,4 @@
 ﻿using SharpDX;
-using System;
 
 namespace _3dApplication
 {
