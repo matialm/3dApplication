@@ -38,25 +38,24 @@ namespace _3dApplication
             PixelShader = _device.CreatePixelShader(dataPS, pixelShaderFunction);
             VertexShader = _device.CreateVertexShader(dataVS, vertexShaderFunction);
         }
-        //protected void LoadShadersValues()
-        //{
-        //    var camera = Camera.Instance;
-        //    VertexShaderValues.Clear();
-        //    VertexShaderValues.Add("View", camera.View);
-        //    VertexShaderValues.Add("Projection", camera.Projection);
-        //    VertexShaderValues.Add("World", _world);
-        //}
         protected void LoadShadersValues()
         {
             var camera = Camera.Instance;
-            VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "View", camera.View);
-            VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "Projection", camera.Projection);
-            VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "World", _world);
+            VertexShaderValues.Clear();
+            VertexShaderValues.Add("View", camera.View.ToArray());
+            VertexShaderValues.Add("Projection", camera.Projection.ToArray());
+            VertexShaderValues.Add("World", _world.ToArray());
         }
+        //protected void LoadShadersValues()
+        //{
+        //    var camera = Camera.Instance;
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "View", camera.View);
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "Projection", camera.Projection);
+        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "World", _world);
+        //}
         #endregion
 
         #endregion
-
 
         #region Public
 
@@ -80,8 +79,8 @@ namespace _3dApplication
         public PixelShader PixelShader { get; set; }
         public VertexShader VertexShader { get; set; }
         public PrimitiveType PrimitiveType { get; set; }
-        public Dictionary<string, Matrix> VertexShaderValues { get; set; }
-        public Dictionary<string, Matrix> PixelShaderValues { get; set; }
+        public Dictionary<string, float[]> VertexShaderValues { get; set; }
+        public Dictionary<string, float[]> PixelShaderValues { get; set; }
         public Matrix World
         {
             get
@@ -104,8 +103,8 @@ namespace _3dApplication
             MinVertexIndex = 0;
             StartIndex = 0;
 
-            VertexShaderValues = new Dictionary<string, Matrix>();
-            PixelShaderValues = new Dictionary<string, Matrix>();
+            VertexShaderValues = new Dictionary<string, float[]>();
+            PixelShaderValues = new Dictionary<string, float[]>();
         }
 
         public virtual void Transform()

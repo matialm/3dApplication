@@ -84,7 +84,6 @@ namespace _3dApplication
         public void Render(IEnumerable<IMesh> meshes)
         {
             _device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Blue, 1.0f, 0);
-            _device.BeginScene();
 
             _device.SetRenderState(RenderState.FillMode, _wireframe ? FillMode.Wireframe : FillMode.Solid);
             _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
@@ -92,6 +91,11 @@ namespace _3dApplication
 
             foreach (IMesh mesh in meshes)
             {
+                for (int i = 0; i < 9; i++)
+                    _device.SetTexture(i, null);
+
+                _device.BeginScene();
+
                 _device.SetTexture(0, mesh.BaseTexture);
                 _device.SetStreamSource(0, mesh.VertexBuffer, 0, mesh.Stride);
                 _device.VertexDeclaration = mesh.VertexDeclaration;
@@ -100,20 +104,21 @@ namespace _3dApplication
                 _device.PixelShader = mesh.PixelShader;
                 _device.VertexShader = mesh.VertexShader;
 
-                //foreach (KeyValuePair<string, Matrix> item in mesh.VertexShaderValues)
-                //{
-                //    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                //}
+                foreach (KeyValuePair<string, float[]> item in mesh.VertexShaderValues)
+                {
+                    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                }
 
-                //foreach (KeyValuePair<string, Matrix> item in mesh.PixelShaderValues)
-                //{
-                //    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                //}
+                foreach (KeyValuePair<string, float[]> item in mesh.PixelShaderValues)
+                {
+                    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
+                }
 
                 _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.VertexCount, mesh.StartIndex, mesh.PrimitiveCount);
+
+                _device.EndScene();
             }
 
-            _device.EndScene();
             _device.Present();
         }
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
