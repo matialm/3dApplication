@@ -42,17 +42,10 @@ namespace _3dApplication
         {
             var camera = Camera.Instance;
             VertexShaderValues.Clear();
-            VertexShaderValues.Add("View", camera.View.ToArray());
-            VertexShaderValues.Add("Projection", camera.Projection.ToArray());
-            VertexShaderValues.Add("World", _world.ToArray());
+            VertexShaderValues.Add(new ShaderConstant { StartRegister = 0, Values = camera.View.ToArray() });
+            VertexShaderValues.Add(new ShaderConstant { StartRegister = 4, Values = camera.Projection.ToArray() });
+            VertexShaderValues.Add(new ShaderConstant { StartRegister = 8, Values = _world.ToArray() });
         }
-        //protected void LoadShadersValues()
-        //{
-        //    var camera = Camera.Instance;
-        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "View", camera.View);
-        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "Projection", camera.Projection);
-        //    VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "World", _world);
-        //}
         #endregion
 
         #endregion
@@ -79,15 +72,8 @@ namespace _3dApplication
         public PixelShader PixelShader { get; set; }
         public VertexShader VertexShader { get; set; }
         public PrimitiveType PrimitiveType { get; set; }
-        public Dictionary<string, float[]> VertexShaderValues { get; set; }
-        public Dictionary<string, float[]> PixelShaderValues { get; set; }
-        public Matrix World
-        {
-            get
-            {
-                return _world;
-            }
-        }
+        public List<ShaderConstant> VertexShaderValues { get; set; }
+        public List<ShaderConstant> PixelShaderValues { get; set; }
         #endregion
 
         #region Methods
@@ -103,8 +89,8 @@ namespace _3dApplication
             MinVertexIndex = 0;
             StartIndex = 0;
 
-            VertexShaderValues = new Dictionary<string, float[]>();
-            PixelShaderValues = new Dictionary<string, float[]>();
+            VertexShaderValues = new List<ShaderConstant>();
+            PixelShaderValues = new List<ShaderConstant>();
         }
 
         public virtual void Transform()

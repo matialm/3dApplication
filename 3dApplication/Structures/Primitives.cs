@@ -18,4 +18,10 @@ namespace _3dApplication
         public Vector3 Position { get; set; }
         public Color Color { get; set; }
     }
+
+    public struct ShaderConstant
+    {
+        public int StartRegister { get; set; }
+        public float[] Values { get; set; }
+    }
 }

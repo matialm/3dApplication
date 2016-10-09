@@ -91,9 +91,6 @@ namespace _3dApplication
 
             foreach (IMesh mesh in meshes)
             {
-                for (int i = 0; i < 9; i++)
-                    _device.SetTexture(i, null);
-
                 _device.BeginScene();
 
                 _device.SetTexture(0, mesh.BaseTexture);
@@ -103,24 +100,20 @@ namespace _3dApplication
 
                 _device.PixelShader = mesh.PixelShader;
                 _device.VertexShader = mesh.VertexShader;
+ 
+                foreach (ShaderConstant constant in mesh.VertexShaderValues)
+                    _device.SetVertexShaderConstant(constant.StartRegister, constant.Values);
 
-                foreach (KeyValuePair<string, float[]> item in mesh.VertexShaderValues)
-                {
-                    _device.VertexShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                }
-
-                foreach (KeyValuePair<string, float[]> item in mesh.PixelShaderValues)
-                {
-                    _device.PixelShader.Function.ConstantTable.SetValue(_device, item.Key, item.Value);
-                }
+                foreach (ShaderConstant constant in mesh.PixelShaderValues)
+                    _device.SetPixelShaderConstant(constant.StartRegister, constant.Values);
 
                 _device.DrawIndexedPrimitive(mesh.PrimitiveType, mesh.BaseVertexIndex, mesh.MinVertexIndex, mesh.VertexCount, mesh.StartIndex, mesh.PrimitiveCount);
-
                 _device.EndScene();
             }
 
             _device.Present();
         }
+
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
             var buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
@@ -156,14 +149,14 @@ namespace _3dApplication
         }
         public PixelShader CreatePixelShader(byte[] data, string entryPoint)
         {
-            var result = ShaderBytecode.Compile(data, entryPoint, "ps_2_0", ShaderFlags.None);
+            var result = ShaderBytecode.Compile(data, entryPoint, "ps_2_0", ShaderFlags.PackMatrixRowMajor);
             var pixelShader = new PixelShader(_device, result.Bytecode);
 
             return pixelShader;
         }
         public VertexShader CreateVertexShader(byte[] data, string entryPoint)
         {
-            var result = ShaderBytecode.Compile(data, entryPoint, "vs_2_0", ShaderFlags.None);
+            var result = ShaderBytecode.Compile(data, entryPoint, "vs_2_0", ShaderFlags.PackMatrixRowMajor);
             var vertexShader = new VertexShader(_device, result.Bytecode);
 
             return vertexShader;

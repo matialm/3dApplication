@@ -140,7 +140,7 @@ namespace _3dApplication
         private new void LoadShadersValues()
         {
             base.LoadShadersValues();
-            //VertexShader.Function.ConstantTable.SetValue(VertexShader.Device, "CameraPosition", Camera.Instance.Position);
+            VertexShaderValues.Add(new ShaderConstant { StartRegister = 12, Values = Camera.Instance.Position.ToArray() });
         }
         #endregion
 
