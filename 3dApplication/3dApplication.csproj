@@ -98,6 +98,9 @@
     <None Include="Textures\Islands.dds">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Textures\SkyBox.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="HeightMaps\Map01.bmp">

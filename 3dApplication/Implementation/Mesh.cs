@@ -1,8 +1,6 @@
 ﻿using SharpDX;
 using SharpDX.Direct3D9;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
 
 namespace _3dApplication
 {
@@ -20,28 +18,31 @@ namespace _3dApplication
         #region Methods
         protected void LoadTexture(string fileName)
         {
-            var data = File.ReadAllBytes(Application.StartupPath + $@"\Textures\{fileName}");
-            var baseTexture = _device.CreateBaseTexture(data);
+            string file = $@"Textures\{fileName}";
+            var baseTexture = _device.CreateBaseTexture(file);
+
             _baseTextures.Add(baseTexture);
         }
         protected void LoadCubeTexture(string fileName)
         {
-            var data = File.ReadAllBytes(Application.StartupPath + $@"\Textures\{fileName}");
-            var baseTexture = _device.CreateBaseTextureFromCubeTexture(data);
+            string file = $@"Textures\{fileName}";
+            var baseTexture = _device.CreateBaseTextureFromCubeTexture(file);
+
             _baseTextures.Add(baseTexture);
         }
         protected void LoadShaders(string vertexShaderFile, string pixelShaderFile, string vertexShaderFunction, string pixelShaderFunction)
         {
-            var dataVS = File.ReadAllBytes(Application.StartupPath + $@"\Shaders\Vertex\{vertexShaderFile}");
-            var dataPS = File.ReadAllBytes(Application.StartupPath + $@"\Shaders\Pixel\{pixelShaderFile}");
+            string vertexshaderFile = $@"Shaders\Vertex\{vertexShaderFile}";
+            string pixelshaderFile = $@"Shaders\Pixel\{pixelShaderFile}";
 
-            PixelShader = _device.CreatePixelShader(dataPS, pixelShaderFunction);
-            VertexShader = _device.CreateVertexShader(dataVS, vertexShaderFunction);
+            PixelShader = _device.CreatePixelShader(pixelshaderFile, pixelShaderFunction);
+            VertexShader = _device.CreateVertexShader(vertexshaderFile, vertexShaderFunction);
         }
         protected void LoadShadersValues()
         {
             var camera = Camera.Instance;
             VertexShaderValues.Clear();
+
             VertexShaderValues.Add(new ShaderConstant { StartRegister = 0, Values = camera.View.ToArray() });
             VertexShaderValues.Add(new ShaderConstant { StartRegister = 4, Values = camera.Projection.ToArray() });
             VertexShaderValues.Add(new ShaderConstant { StartRegister = 8, Values = _world.ToArray() });
@@ -100,6 +101,5 @@ namespace _3dApplication
         #endregion
 
         #endregion
-
     }
 }

@@ -13,8 +13,6 @@ namespace _3dApplication
 
         #region Attributes
         private float _scale;
-        private float _widthTextureOffset = (1f / 4f);
-        private float _heightTextureOffset = (1f / 4f);
         private Vector3 _center;
         #endregion
 
@@ -158,7 +156,7 @@ namespace _3dApplication
             LoadProperties();
             LoadVertices();
             LoadIndexs();
-            LoadCubeTexture("Islands.dds");
+            LoadCubeTexture("Skybox.dds");
             LoadVertexDeclaration();
             LoadShaders("Skybox.vs", "Skybox.ps", "TextureAndTransform", "TexturePixel");
         }

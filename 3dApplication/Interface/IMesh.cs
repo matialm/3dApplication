@@ -1,5 +1,4 @@
-﻿using SharpDX;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D9;
 using System.Collections.Generic;
 
 namespace _3dApplication
