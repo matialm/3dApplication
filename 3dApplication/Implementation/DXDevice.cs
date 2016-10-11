@@ -1,9 +1,9 @@
-﻿using SharpDX;
-using SharpDX.Direct3D9;
+﻿using SharpDX.Direct3D9;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Color = SharpDX.Color;
 using Device = SharpDX.Direct3D9.Device;
@@ -20,6 +20,7 @@ namespace _3dApplication
         private Device _device;
         private Camera _camera;
         private bool _wireframe = false;
+        private string _root;
         #endregion
 
         #region Methods
@@ -64,6 +65,7 @@ namespace _3dApplication
         #region Methods
         private DXDevice()
         {
+            _root = Application.StartupPath;
             _camera = Camera.Instance;
             IsAlive = true;
             Size = new Size(800, 600);
@@ -135,27 +137,33 @@ namespace _3dApplication
 
             return buffer;
         }
-        public BaseTexture CreateBaseTexture(byte[] data)
+        public BaseTexture CreateBaseTexture(string file)
         {
+            var data = File.ReadAllBytes($@"{_root}\{file}");
             var texture = Texture.FromMemory(_device, data);
             var baseTexture = new BaseTexture(texture.NativePointer);
+
             return baseTexture;
         }
-        public BaseTexture CreateBaseTextureFromCubeTexture(byte[] data)
+        public BaseTexture CreateBaseTextureFromCubeTexture(string file)
         {
+            var data = File.ReadAllBytes($@"{_root}\{file}");
             var texture = CubeTexture.FromMemory(_device, data);
             var baseTexture = new CubeTexture(texture.NativePointer);
+
             return baseTexture;
         }
-        public PixelShader CreatePixelShader(byte[] data, string entryPoint)
+        public PixelShader CreatePixelShader(string file, string entryPoint)
         {
+            var data = File.ReadAllBytes($@"{_root}\{file}");
             var result = ShaderBytecode.Compile(data, entryPoint, "ps_2_0", ShaderFlags.PackMatrixRowMajor);
             var pixelShader = new PixelShader(_device, result.Bytecode);
 
             return pixelShader;
         }
-        public VertexShader CreateVertexShader(byte[] data, string entryPoint)
+        public VertexShader CreateVertexShader(string file, string entryPoint)
         {
+            var data = File.ReadAllBytes($@"{_root}\{file}");
             var result = ShaderBytecode.Compile(data, entryPoint, "vs_2_0", ShaderFlags.PackMatrixRowMajor);
             var vertexShader = new VertexShader(_device, result.Bytecode);
 

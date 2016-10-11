@@ -71,7 +71,6 @@ namespace _3dApplication
             _up = new Vector3(0, 1, 0);
             View = Matrix.Identity;
         }
-
         public void SetSize(float width, float height)
         {
             _aspectRatio = width / height;
