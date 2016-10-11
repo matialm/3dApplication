@@ -4,11 +4,11 @@ struct Vertex
 	float3 TexCoords    : TEXCOORD0;
 };
 
-Texture ColoredTexture;
+Texture coloredTexture;
 
 sampler TextureSampler = sampler_state
 { 
-	texture = <ColoredTexture>;
+	texture = <coloredTexture>;
 	magfilter = LINEAR;
 	minfilter = LINEAR;
 	mipfilter = LINEAR;

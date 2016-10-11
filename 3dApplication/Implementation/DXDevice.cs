@@ -115,7 +115,6 @@ namespace _3dApplication
 
             _device.Present();
         }
-
         public VertexBuffer CreateVertexBuffer<T>(int sizeInBytes, T[] vertices) where T : struct
         {
             var buffer = new VertexBuffer(_device, sizeInBytes, Usage.WriteOnly, VertexFormat.None, Pool.Default);
