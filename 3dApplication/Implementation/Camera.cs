@@ -12,12 +12,10 @@ namespace _3dApplication
         private static Camera _instance = null;
 
         private Vector3 _position;
-        private Vector3 _angle;
-        private Vector3 _eye;
-        private Vector3 _target;
+        private Vector3 _rotation;
+        private Vector3 _lookAt;
         private Vector3 _up;
         private float _fov;
-        private float _aspectRatio;
         private float _zNear;
         private float _zFar;
         #endregion
@@ -61,75 +59,91 @@ namespace _3dApplication
         #region Methods
         private Camera()
         {
-            _position = new Vector3(0, 0, 0);
-            _angle = new Vector3(0, 0, 0);
+
+            _position = new Vector3(0, 1, -15);
+            _lookAt = new Vector3(0, 0, 1);
+            _up = new Vector3(0, 1, 0);
+
+            _rotation = new Vector3(0, 0, 0);
             _fov = (float)Math.PI / 4;
             _zNear = 8f;
             _zFar = 0f;
-            _eye = new Vector3(0, 10, -15);
-            _target = new Vector3(0, 0, 0);
-            _up = new Vector3(0, 1, 0);
+
             View = Matrix.Identity;
         }
         public void SetSize(float width, float height)
         {
-            _aspectRatio = width / height;
+            var aspectRatio = width / height;
+            Projection = Matrix.PerspectiveFovLH(_fov, aspectRatio, _zNear, _zFar);
         }
         public void Update()
         {
             var input = Input.Instance;
-            if (input.KeyDown(Key.S))
-            {
-                _position.Z += 0.5f;
-            }
 
-            if (input.KeyDown(Key.W))
+            if (input.KeyDown(Key.S))
             {
                 _position.Z -= 0.5f;
             }
 
-            if (input.KeyDown(Key.D))
+            if (input.KeyDown(Key.W))
             {
-                _position.X -= 0.5f;
+                _position.Z += 0.5f;
             }
 
-            if (input.KeyDown(Key.A))
+            if (input.KeyDown(Key.D))
             {
                 _position.X += 0.5f;
             }
 
+            if (input.KeyDown(Key.A))
+            {
+                _position.X -= 0.5f;
+            }
+
             if (input.KeyDown(Key.Up))
             {
-                _position.Y -= 0.5f;
+                _position.Y += 0.5f;
             }
 
             if (input.KeyDown(Key.Down))
             {
-                _position.Y += 0.5f;              
+                _position.Y -= 0.5f;
             }
 
             if (input.KeyDown(Key.Right))
             {
-                _angle.Y += 1f * (float)(Math.PI / 180);
+                _rotation.Y += 1f * (float)(Math.PI / 180);
             }
 
             if (input.KeyDown(Key.Left))
             {
-                _angle.Y -= 1f * (float)(Math.PI / 180);
+                _rotation.Y -= 1f * (float)(Math.PI / 180);
             }
 
             if (input.KeyDown(Key.PageDown))
             {
-                _angle.X -= 1f * (float)(Math.PI / 180);
+                _rotation.X += 1f * (float)(Math.PI / 180);
             }
 
             if (input.KeyDown(Key.PageUp))
             {
-                _angle.X += 1f * (float)(Math.PI / 180);
+                _rotation.X -= 1f * (float)(Math.PI / 180);
             }
 
-            Projection = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _zNear, _zFar);
-            View = Matrix.RotationYawPitchRoll(_angle.Y, _angle.X, 0) * Matrix.Translation(_position) * Matrix.LookAtLH(_eye, _target, _up);
+
+            var transformation = View;
+
+            var rotation = Matrix3x3.RotationYawPitchRoll(_rotation.Y, _rotation.X, 0);
+            var lookAt = Vector3.Transform(_lookAt, rotation);
+            var up = Vector3.Transform(_up, rotation);
+            var right = Vector3.Cross(up, lookAt);
+            var position = new Vector3(-Vector3.Dot(_position, right), -Vector3.Dot(_position, up), -Vector3.Dot(_position, lookAt));
+
+            transformation.Column1 = new Vector4(right, position.X);
+            transformation.Column2 = new Vector4(up, position.Y);
+            transformation.Column3 = new Vector4(lookAt, position.Z);
+
+            View = transformation;
         }
         #endregion
 
