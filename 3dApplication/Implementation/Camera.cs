@@ -133,15 +133,15 @@ namespace _3dApplication
 
             var transformation = View;
 
-            var rotation = Matrix3x3.RotationYawPitchRoll(_rotation.Y, _rotation.X, 0);
-            var lookAt = Vector3.Transform(_lookAt, rotation);
-            var up = Vector3.Transform(_up, rotation);
+            var rotation = Matrix.RotationYawPitchRoll(_rotation.Y, _rotation.X, 0);
+            var lookAt = Vector3.TransformNormal(_lookAt, rotation);
+            var up = Vector3.TransformNormal(_up, rotation);
             var right = Vector3.Cross(up, lookAt);
-            var position = new Vector3(-Vector3.Dot(_position, right), -Vector3.Dot(_position, up), -Vector3.Dot(_position, lookAt));
+            var position = Vector3.TransformNormal(_position, rotation);
 
-            transformation.Column1 = new Vector4(right, position.X);
-            transformation.Column2 = new Vector4(up, position.Y);
-            transformation.Column3 = new Vector4(lookAt, position.Z);
+            transformation.Column1 = new Vector4(right, -Vector3.Dot(position, right));
+            transformation.Column2 = new Vector4(up, -Vector3.Dot(position, up));
+            transformation.Column3 = new Vector4(lookAt, -Vector3.Dot(position, lookAt));
 
             View = transformation;
         }
