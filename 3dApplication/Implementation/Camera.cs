@@ -80,36 +80,6 @@ namespace _3dApplication
         {
             var input = Input.Instance;
 
-            if (input.KeyDown(Key.S))
-            {
-                _position.Z -= 0.5f;
-            }
-
-            if (input.KeyDown(Key.W))
-            {
-                _position.Z += 0.5f;
-            }
-
-            if (input.KeyDown(Key.D))
-            {
-                _position.X += 0.5f;
-            }
-
-            if (input.KeyDown(Key.A))
-            {
-                _position.X -= 0.5f;
-            }
-
-            if (input.KeyDown(Key.Up))
-            {
-                _position.Y += 0.5f;
-            }
-
-            if (input.KeyDown(Key.Down))
-            {
-                _position.Y -= 0.5f;
-            }
-
             if (input.KeyDown(Key.Right))
             {
                 _rotation.Y += 1f * (float)(Math.PI / 180);
@@ -130,20 +100,53 @@ namespace _3dApplication
                 _rotation.X -= 1f * (float)(Math.PI / 180);
             }
 
+            var pitch = Matrix.RotationX(_rotation.X);
+            var yaw = Matrix.RotationY(_rotation.Y);
 
-            var transformation = View;
-
-            var rotation = Matrix.RotationYawPitchRoll(_rotation.Y, _rotation.X, 0);
-            var lookAt = Vector3.TransformNormal(_lookAt, rotation);
-            var up = Vector3.TransformNormal(_up, rotation);
+            var lookAt = Vector3.TransformNormal(_lookAt, pitch * yaw);
+            var up = Vector3.TransformNormal(_up, pitch * yaw);
             var right = Vector3.Cross(up, lookAt);
-            var position = Vector3.TransformNormal(_position, rotation);
 
-            transformation.Column1 = new Vector4(right, -Vector3.Dot(position, right));
-            transformation.Column2 = new Vector4(up, -Vector3.Dot(position, up));
-            transformation.Column3 = new Vector4(lookAt, -Vector3.Dot(position, lookAt));
+            var lookAtReference = Vector3.TransformNormal(_lookAt, yaw);
 
-            View = transformation;
+            if (input.KeyDown(Key.S))
+            {
+                _position -= 0.5f * lookAtReference;
+            }
+
+            if (input.KeyDown(Key.W))
+            {
+                _position += 0.5f * lookAtReference;
+            }
+
+            if (input.KeyDown(Key.D))
+            {
+                _position += 0.5f * right;
+            }
+
+            if (input.KeyDown(Key.A))
+            {
+                _position -= 0.5f * right;
+            }
+
+            if (input.KeyDown(Key.Up))
+            {
+                _position.Y += 0.5f;
+            }
+
+            if (input.KeyDown(Key.Down))
+            {
+                _position.Y -= 0.5f;
+            }
+
+            var view = View;
+            var position = _position;
+
+            view.Column1 = new Vector4(right, -Vector3.Dot(position, right));
+            view.Column2 = new Vector4(up, -Vector3.Dot(position, up));
+            view.Column3 = new Vector4(lookAt, -Vector3.Dot(position, lookAt));
+
+            View = view;
         }
         #endregion
 
