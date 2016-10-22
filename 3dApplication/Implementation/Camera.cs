@@ -21,6 +21,73 @@ namespace _3dApplication
         #endregion
 
         #region Methods
+        private Camera()
+        {
+            _position = new Vector3(0, 1, -15);
+            _lookAt = new Vector3(0, 0, 1);
+            _up = new Vector3(0, 1, 0);
+
+            _rotation = new Vector3(0, 0, 0);
+            _fov = (float)Math.PI / 4;
+            _zNear = 8f;
+            _zFar = 0f;
+        }
+        private void UpdateRotation()
+        {
+            var input = Input.Instance;
+            if (input.KeyDown(Key.Right))
+            {
+                _rotation.Y += 1f * (float)(Math.PI / 180);
+            }
+
+            if (input.KeyDown(Key.Left))
+            {
+                _rotation.Y -= 1f * (float)(Math.PI / 180);
+            }
+
+            if (input.KeyDown(Key.PageDown))
+            {
+                _rotation.X += 1f * (float)(Math.PI / 180);
+            }
+
+            if (input.KeyDown(Key.PageUp))
+            {
+                _rotation.X -= 1f * (float)(Math.PI / 180);
+            }
+        }
+        private void UpdateTranslation(Vector3 lookAt, Vector3 right, Vector3 up)
+        {
+            var input = Input.Instance;
+            if (input.KeyDown(Key.S))
+            {
+                _position -= 0.5f * lookAt;
+            }
+
+            if (input.KeyDown(Key.W))
+            {
+                _position += 0.5f * lookAt;
+            }
+
+            if (input.KeyDown(Key.D))
+            {
+                _position += 0.5f * right;
+            }
+
+            if (input.KeyDown(Key.A))
+            {
+                _position -= 0.5f * right;
+            }
+
+            if (input.KeyDown(Key.Up))
+            {
+                _position += 0.5f * up;
+            }
+
+            if (input.KeyDown(Key.Down))
+            {
+                _position -= 0.5f * up;
+            }
+        }
         #endregion
 
         #endregion
@@ -57,20 +124,6 @@ namespace _3dApplication
         #endregion
 
         #region Methods
-        private Camera()
-        {
-
-            _position = new Vector3(0, 1, -15);
-            _lookAt = new Vector3(0, 0, 1);
-            _up = new Vector3(0, 1, 0);
-
-            _rotation = new Vector3(0, 0, 0);
-            _fov = (float)Math.PI / 4;
-            _zNear = 8f;
-            _zFar = 0f;
-
-            View = Matrix.Identity;
-        }
         public void SetSize(float width, float height)
         {
             var aspectRatio = width / height;
@@ -78,73 +131,21 @@ namespace _3dApplication
         }
         public void Update()
         {
-            var input = Input.Instance;
-
-            if (input.KeyDown(Key.Right))
-            {
-                _rotation.Y += 1f * (float)(Math.PI / 180);
-            }
-
-            if (input.KeyDown(Key.Left))
-            {
-                _rotation.Y -= 1f * (float)(Math.PI / 180);
-            }
-
-            if (input.KeyDown(Key.PageDown))
-            {
-                _rotation.X += 1f * (float)(Math.PI / 180);
-            }
-
-            if (input.KeyDown(Key.PageUp))
-            {
-                _rotation.X -= 1f * (float)(Math.PI / 180);
-            }
+            UpdateRotation();
 
             var pitch = Matrix.RotationX(_rotation.X);
             var yaw = Matrix.RotationY(_rotation.Y);
-
             var lookAt = Vector3.TransformNormal(_lookAt, pitch * yaw);
             var up = Vector3.TransformNormal(_up, pitch * yaw);
             var right = Vector3.Cross(up, lookAt);
-
             var lookAtReference = Vector3.TransformNormal(_lookAt, yaw);
 
-            if (input.KeyDown(Key.S))
-            {
-                _position -= 0.5f * lookAtReference;
-            }
+            UpdateTranslation(lookAtReference, right, _up);
 
-            if (input.KeyDown(Key.W))
-            {
-                _position += 0.5f * lookAtReference;
-            }
-
-            if (input.KeyDown(Key.D))
-            {
-                _position += 0.5f * right;
-            }
-
-            if (input.KeyDown(Key.A))
-            {
-                _position -= 0.5f * right;
-            }
-
-            if (input.KeyDown(Key.Up))
-            {
-                _position.Y += 0.5f;
-            }
-
-            if (input.KeyDown(Key.Down))
-            {
-                _position.Y -= 0.5f;
-            }
-
-            var view = View;
-            var position = _position;
-
-            view.Column1 = new Vector4(right, -Vector3.Dot(position, right));
-            view.Column2 = new Vector4(up, -Vector3.Dot(position, up));
-            view.Column3 = new Vector4(lookAt, -Vector3.Dot(position, lookAt));
+            var view = Matrix.Identity;
+            view.Column1 = new Vector4(right, -Vector3.Dot(_position, right));
+            view.Column2 = new Vector4(up, -Vector3.Dot(_position, up));
+            view.Column3 = new Vector4(lookAt, -Vector3.Dot(_position, lookAt));
 
             View = view;
         }
