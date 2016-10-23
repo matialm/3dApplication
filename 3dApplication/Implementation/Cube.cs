@@ -149,7 +149,7 @@ namespace _3dApplication
         #endregion
 
         #region Methods
-        public Cube() : this(new int[] { 0, 0, 0 })
+        public Cube() : this(new int[] { 0, 1, 0 })
         {
 
         }

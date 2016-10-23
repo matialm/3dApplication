@@ -29,8 +29,8 @@ namespace _3dApplication
 
             _rotation = new Vector3(0, 0, 0);
             _fov = (float)Math.PI / 4;
-            _zNear = 8f;
-            _zFar = 0f;
+            _zNear = 1f;
+            _zFar = 200f;
         }
         private void UpdateRotation()
         {
@@ -127,7 +127,16 @@ namespace _3dApplication
         public void SetSize(float width, float height)
         {
             var aspectRatio = width / height;
-            Projection = Matrix.PerspectiveFovLH(_fov, aspectRatio, _zNear, _zFar);
+            var projection = Matrix.Zero;
+
+            var distance = 1 / (float)Math.Tan(_fov / 2);
+
+            projection.Column1 = new Vector4(distance/aspectRatio, 0, 0, 0);
+            projection.Column2 = new Vector4(0, distance, 0, 0);
+            projection.Column3 = new Vector4(0, 0, _zFar / (_zFar - _zNear), (-1 * _zNear * _zFar) / (_zFar - _zNear));
+            projection.Column4 = new Vector4(0, 0, 1, 0);
+
+            Projection = projection;
         }
         public void Update()
         {
