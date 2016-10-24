@@ -22,12 +22,8 @@ namespace _3dApplication
 
             IList<IMesh> meshes = new List<IMesh>();
 
-            var heightMap = new HeightMap();
-            var skybox = new Skybox();
-            skybox.SetSize(heightMap.GetWidth());
-
-            meshes.Add(skybox);
-            meshes.Add(heightMap);
+            meshes.Add(new Skybox());
+            meshes.Add(new HeightMap());
             meshes.Add(new Cube());
             //meshes.Add(new Cube(new int[] { 3, 2, 0 }));
 

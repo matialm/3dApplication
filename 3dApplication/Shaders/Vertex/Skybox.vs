@@ -13,12 +13,11 @@ Vertex TextureAndTransform(Vertex input)
 {
 	Vertex output = (Vertex)0;
 
+	float4x4 worldViewProjection = mul(World, mul(View, Projection));
 	float4 worldPosition = mul(input.Position, World);
-	float4 worldView = mul(worldPosition, View);
-	float4 worldViewProjection = mul(worldView, Projection);
 
-	output.Position = worldViewProjection;
-	output.TexCoords = worldPosition + CameraPosition;
+	output.Position = mul(input.Position + CameraPosition, (worldViewProjection)).xyzz;
+	output.TexCoords = worldPosition;
 
 	return output;
 }
