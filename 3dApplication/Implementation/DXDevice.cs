@@ -91,6 +91,9 @@ namespace _3dApplication
             _device.SetRenderState(RenderState.CullMode, _wireframe ? Cull.None : Cull.Counterclockwise);
             _device.SetRenderState(RenderState.Lighting, false);
 
+            _device.SetSamplerState(0, SamplerState.MagFilter, TextureFilter.Anisotropic);
+            _device.SetSamplerState(0, SamplerState.MinFilter, TextureFilter.Anisotropic);
+
             foreach (IMesh mesh in meshes)
             {
                 _device.BeginScene();
